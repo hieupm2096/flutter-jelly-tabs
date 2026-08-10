@@ -334,13 +334,13 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Test: `packages/jelly_tabs/test/src/widgets/tab_item_test.dart`
 - Create: `packages/jelly_tabs/lib/src/widgets/tab_item.dart`
 
-- [ ] **Step 1: Write the failing test** — renders active vs inactive icon (different builders),
+- [x] **Step 1: Write the failing test** — renders active vs inactive icon (different builders),
       label with color/fontWeight, badge when provided, labelStyle applied, `displayScale` scales.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `TabItem` mirroring `tab-item.tsx` (icon + translateY 2*scale, label
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `TabItem` mirroring `tab-item.tsx` (icon + translateY 2*scale, label
       fontSize 13*scale, badge positioned top-right, overflow hidden, fontWeight active 700/400).
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: tab item widget"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: tab item widget"`
 
 ### Task 4.3: `PillMaskedView`
 
@@ -349,14 +349,14 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Create: `packages/jelly_tabs/lib/src/widgets/pill_masked_view.dart`
 - Create: `packages/jelly_tabs/lib/src/widgets/pill_path_clipper.dart`
 
-- [ ] **Step 1: Write the failing test** — `PillPathClipper.getClip` produces a capsule (radius =
+- [x] **Step 1: Write the failing test** — `PillPathClipper.getClip` produces a capsule (radius =
       itemHeight/2) at `value * tabWidth + tabWidth/2` with scaleX/scaleY applied about the pill
       center; hidden when no selection (returns `null`/empty via parent `Visibility`).
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `PillMaskedView` (ClipPath + selected-content layer) and
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `PillMaskedView` (ClipPath + selected-content layer) and
       `PillPathClipper` with the velocity-shear math folded in.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: pill masked view"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: pill masked view"`
 
 ### Task 4.4: `JellyTabBarHeadless` — static rendering
 
