@@ -32,9 +32,10 @@ other; `S1`/`S2` are the immediate next milestones.
 
 ### 🚧 S1 — Scaffold (follow-up session 1)
 
-- [ ] Monorepo: `melos.yaml`, root `pubspec.yaml`, CI workflow, `.gitignore`
+- [ ] Workspace: root `pubspec.yaml` (native pub workspaces), CI workflow, `.gitignore`
+- [ ] Vendor `reference/react-native-jelly-tabs/` @ pinned commit `67f47f2` for fidelity re-checks
 - [ ] `jelly_tabs` package from Very Good CLI template (`very_good_analysis`, barrel, `pumpApp`)
-- [ ] `melos bootstrap`; gates green (analyze/format/test baseline)
+- [ ] `dart pub get` at workspace root; gates green (analyze/format/test baseline)
 - **Exit criteria:** clean repo, CI green, package + example scaffolding compiles.
 
 ### ⏳ S2 — Core engine (follow-up session 2)
@@ -76,7 +77,7 @@ other; `S1`/`S2` are the immediate next milestones.
 - [ ] Widgetbook catalog (VGV `ui-package` convention) for the package.
 - [ ] `recording` mode polish / exportable animation recording for docs.
 - [ ] Cursor/hover states for desktop/web (beyond RN parity).
-- [ ] pub.dev publish + `flutter pub publish --dry-run` + changelog automation (melos/release-please).
+- [ ] pub.dev publish + `flutter pub publish --dry-run` + changelog automation (release-please).
 - [ ] Optional side-by-side automated fidelity harness: replay a recorded RN gesture sequence
       against the Dart engine and diff trajectories.
 
@@ -89,7 +90,7 @@ Work is executed in **dedicated sessions** (fresh context per phase), driven by 
 | Standards (during build) | `vgv-ai-flutter-plugin` skills + `flutter-reviewer` agent |
 | Workflow (plan→build→review) | `vgv-wingspan` (`/plan`, `/build`, `/review`) |
 | Quality gates | `very_good_analysis`, `dart format`, `flutter test` + coverage, green-gate |
-| Repo | monorepo (`packages/jelly_tabs` + `example`), melos, GitHub Actions |
+| Repo | monorepo (`packages/jelly_tabs` + `example`), native pub workspaces, GitHub Actions |
 
 Each session's handoff is recorded by updating this roadmap's checkboxes and the
 `docs/implementation-plan.md` checkboxes as tasks complete.

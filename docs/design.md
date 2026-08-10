@@ -10,7 +10,12 @@ timestamp: 2026-08-08T00:00:00Z
 
 > **Status:** Approved for docs. Package skeleton + implementation are deferred to a dedicated follow-up session.
 > **Date:** 2026-08-08
-> **Source of truth:** [`felipe-software/react-native-jelly-tabs`](https://github.com/felipe-software/react-native-jelly-tabs) (analyzed at commit `main`, see `docs/architecture.md` for module mapping).
+> **Source of truth:** [`felipe-software/react-native-jelly-tabs`](https://github.com/felipe-software/react-native-jelly-tabs)
+> pinned at commit [`67f47f2`](https://github.com/felipe-software/react-native-jelly-tabs/commit/67f47f2b5ef665eb7c6d9fd4a3427e346f25cbb8)
+> (MIT licensed — confirmed compatible with a from-scratch Dart reimplementation). A read-only
+> snapshot of the analyzed source files is vendored at `reference/react-native-jelly-tabs/` so
+> later sessions can re-verify fidelity claims against ground truth instead of trusting these
+> docs alone. See `docs/architecture.md` for module mapping.
 
 ## 1. Overview
 
@@ -51,6 +56,8 @@ and MaskedView (pill reveal).
 - No Bloc / state-management integration inside the package (plain Flutter + controllers).
 - No native plugins or platform channels (no MaskedView equivalent exists; we use a pure-Flutter clip).
 - No Flutter-side "recording" UI or color laboratory (the RN example's extras).
+- No RTL/bidi mirroring (drag direction, pill motion, badge placement) — matches the RN source,
+  which is LTR-only. Revisit if a consumer requests it.
 
 ## 3. Confirmed Scope Decisions
 
@@ -174,6 +181,11 @@ JellyTabsConfig resolveJellyTabsConfig([JellyTabsConfigOverride? override]);
 // shallow-spreads Partial<TabBarColors> / Partial<TabBarOpacity>.
 ```
 
+All resolved config classes (`JellyTabsConfig`, `JellyTabsColors`, `JellyTabsOpacity`, etc.) and
+their `*Override` counterparts implement value equality (`==`/`hashCode`). Consumers routinely
+construct these inline inside `build()`; without value equality, a freshly-constructed-but-equal
+config would look "changed" on every rebuild and could trigger spurious animation/ticker resets.
+
 ### 5.5 Defaults (copied verbatim from RN)
 
 | Constant | Value |
@@ -252,8 +264,9 @@ Because the reference runs on Reanimated worklets, the strongest fidelity eviden
 - **Widget:** `test/src/widgets/` via a `pumpApp` helper — press/drag/long-press behavior, controlled
   vs uncontrolled selection, rejected press restore, badges, semantics.
 - **Golden:** appearance across configs, tagged `TestTag.golden`.
-- **Gates:** `very_good_analysis` (no issues), `dart format`, `flutter test` with coverage target,
-  `flutter test --platform chrome` for web parity (as configured).
+- **Gates:** `very_good_analysis` (no issues), `dart format`, `flutter test` with coverage —
+  **100%** on `lib/src/config/` and `lib/src/math/` (pure, deterministic, cheap to fully cover),
+  **90%+** package-wide — `flutter test --platform chrome` for web parity (as configured).
 - **Example:** app builds/runs on android/ios/web; integration smoke test.
 
 See `docs/architecture.md` §Testing for the full strategy and `docs/implementation-plan.md` for

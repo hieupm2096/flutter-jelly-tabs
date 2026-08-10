@@ -21,7 +21,7 @@ timestamp: 2026-08-08T00:00:00Z
 ClipPath-based pill reveal, pointer-event gesture layer, `SpringSimulation` distortion. See
 `docs/architecture.md`.
 
-**Tech Stack:** Flutter SDK (no runtime deps), `very_good_analysis`, `melos`, Very Good CLI
+**Tech Stack:** Flutter SDK (no runtime deps), `very_good_analysis`, native pub workspaces, Very Good CLI
 templates, Flutter test + goldens, GitHub Actions.
 
 **Spec:** `docs/design.md` · **Architecture:** `docs/architecture.md` · **Roadmap:** `docs/roadmap.md`
@@ -30,42 +30,41 @@ templates, Flutter test + goldens, GitHub Actions.
 
 ## Phase 0 — Workspace Scaffold
 
-### Task 0.1: Create the monorepo skeleton
+### Task 0.1: Create the workspace skeleton
 
 **Files:**
-- Create: `melos.yaml`
-- Create: `pubspec.yaml` (workspace root, no deps)
+- Create: `pubspec.yaml` (workspace root, no deps — see [ADR-0001](./adr/0001-native-pub-workspaces-over-melos.md))
 - Create: `.gitignore`
 - Create: `.github/workflows/ci.yaml`
 - Create: `README.md` (root — repo overview)
+- Create: `reference/react-native-jelly-tabs/` (vendored snapshot @ `67f47f2`, read-only)
 
 - [ ] **Step 1: Write the failing check** — n/a (scaffold, no test yet; gate is `flutter analyze` clean).
-- [ ] **Step 2: Create root files**
-
-```yaml
-# melos.yaml
-name: flutter_jelly_tabs
-packages:
-  - packages/**
-  - example
-```
+- [ ] **Step 2: Vendor the reference source** — check out `felipe-software/react-native-jelly-tabs`
+      at commit `67f47f2b5ef665eb7c6d9fd4a3427e346f25cbb8` and copy the analyzed files
+      (`src/constants.ts`, `src/utils/animation.ts`, `src/utils/pill-jelly-animation.ts`,
+      `src/hooks/use-pill-jelly.ts`, `src/hooks/use-distortion.ts`, `src/components/*.tsx`,
+      `src/types.ts`) into `reference/react-native-jelly-tabs/`, plus its `LICENSE` (MIT). This is
+      read-only ground truth for later sessions — never imported or built.
+- [ ] **Step 3: Create root files**
 
 ```yaml
 # pubspec.yaml
 name: flutter_jelly_tabs
 environment:
   sdk: ^3.10.0
-dev_dependencies:
-  melos: ^6.0.0
+workspace:
+  - packages/jelly_tabs
+  - example
 ```
 
-- [ ] **Step 3: Add CI workflow** — matrix job: `flutter analyze`, `dart format --set-exit-if-changed`,
+- [ ] **Step 4: Add CI workflow** — matrix job: `flutter analyze`, `dart format --set-exit-if-changed`,
       `flutter test`, coverage, then `flutter build` on android/ios/web inside `example/`.
       Follow the VGV `green-gate` gate order (analyze → format → test → coverage).
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add -A && git commit -m "feat: scaffold flutter_jelly_tabs monorepo"
+git add -A && git commit -m "feat: scaffold flutter_jelly_tabs workspace"
 ```
 
 ### Task 0.2: Scaffold the `jelly_tabs` package via Very Good CLI
@@ -81,15 +80,16 @@ git add -A && git commit -m "feat: scaffold flutter_jelly_tabs monorepo"
 - [ ] **Step 3: Set package metadata** — `name: jelly_tabs`, `version: 0.1.0`, description,
       `sdk`/`flutter` environment, `very_good_analysis` dev dep.
 - [ ] **Step 4: Add example app reference** — `example/` app depends on
-      `jelly_tabs: path: ../packages/jelly_tabs` via melos workspace.
+      `jelly_tabs: path: ../packages/jelly_tabs`; both listed under the root `pubspec.yaml`
+      `workspace:` entry (native pub workspaces, see [ADR-0001](./adr/0001-native-pub-workspaces-over-melos.md)).
 - [ ] **Step 5: Commit** — `git add -A && git commit -m "feat: scaffold jelly_tabs package"`
 
-### Task 0.3: Register melos + verify baseline
+### Task 0.3: Resolve workspace + verify baseline
 
-- [ ] **Step 1:** `melos bootstrap`
+- [ ] **Step 1:** `dart pub get` at the workspace root (resolves all workspace packages together).
 - [ ] **Step 2: Run gates** — `flutter analyze`, `dart format --set-exit-if-changed`,
       `flutter test` in `packages/jelly_tabs`. Expected: all clean (template baseline).
-- [ ] **Step 3: Commit any lockfile/format fixes** — `git commit -m "chore: melos bootstrap"`
+- [ ] **Step 3: Commit any lockfile/format fixes** — `git commit -m "chore: workspace bootstrap"`
 
 ## Phase 1 — Config & Models
 
@@ -256,14 +256,26 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Test: `packages/jelly_tabs/test/src/controllers/distortion_controller_test.dart`
 - Create: `packages/jelly_tabs/lib/src/controllers/distortion_controller.dart`
 
-- [ ] **Step 1: Write the failing test** — with a fake `TickerProvider`: `begin` sets
-      pressedScale/glow targets; `update` with vertical translation applies
-      `rubberBand*verticalDrag.follow` to translateY and `1 - progress*distortion` to scaleX;
-      `update` with horizontal-only input keeps scaleX ~1; `end` springs everything to rest;
-      `setTrackWidth` centers `transformOriginX`.
+- [ ] **Step 1: Write the failing test** — with a fake `TickerProvider`: `begin` starts
+      `SpringSimulation`s animating `pressedScale → distortion.pressedScale` and
+      `touchFeedbackOpacity → 1` (both `distortion.spring`); `update` with vertical translation
+      sets `translateY = dragOriginY + rubberBand(v, trackHeight, verticalDrag.rubberBand) *
+      verticalDrag.follow` and `scaleX = 1 - progress * verticalDrag.distortion` as **direct
+      assignments** (no spring, asserted via same-tick equality, not asymptotic approach);
+      `update` with horizontal-only input (`verticalTranslation == 0`) keeps `scaleX == 1`;
+      calling `begin` again mid-flight (before a prior `end` spring settles) captures the
+      in-flight `translateY` value into `dragOriginY` so the new drag compounds correctly instead
+      of jumping; `end` starts `SpringSimulation`s retargeting `translateY→0`, `scaleX→1`,
+      `pressedScale→1`, `touchFeedbackOpacity→0` from current value+velocity, and resets
+      `transformOriginX` to `trackWidth/2` once the `scaleX` spring finishes; `setTrackWidth`
+      centers `transformOriginX`.
 - [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `DistortionController` with `SpringDescription(mass, stiffness,
-      damping)` simulations (RN distortion.spring), `ValueNotifier`s for each animated value.
+- [ ] **Step 3: Implement** — `DistortionController` per `architecture.md` §5.2: `begin`/`end`
+      drive `pressedScale`, `touchFeedbackOpacity`, `translateY`, `scaleX` via
+      `AnimationController.animateWith(SpringSimulation(SpringDescription(mass, stiffness,
+      damping), controller.value, target, controller.velocity))` (RN `distortion.spring`);
+      `update` sets `translateY`/`scaleX`/`transformOriginX` as plain field assignments +
+      `notifyListeners()`, matching RN's un-sprung `update()`.
 - [ ] **Step 4: Run to verify it passes**
 - [ ] **Step 5: Commit** — `git commit -am "feat: distortion controller"`
 

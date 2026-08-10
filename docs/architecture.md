@@ -37,10 +37,14 @@ MaskedView with pure-Flutter equivalents.
 
 ## 2. Package Layout
 
+Uses Dart's native pub workspaces (`resolution: workspace`), not melos — see
+[ADR-0001](./adr/0001-native-pub-workspaces-over-melos.md).
+
 ```
 flutter-jelly-tabs/
-├── melos.yaml                        # monorepo orchestration
-├── pubspec.yaml                      # workspace root (optional; see plan)
+├── pubspec.yaml                      # workspace root: `workspace: [packages/jelly_tabs, example]`
+├── reference/
+│   └── react-native-jelly-tabs/      # vendored read-only snapshot @ 67f47f2, for fidelity re-checks
 ├── packages/
 │   └── jelly_tabs/
 │       ├── pubspec.yaml              # sdk-only dependency, very_good_analysis dev dep
@@ -192,11 +196,33 @@ Reanimated shared values. The controller exposes them as `ValueNotifier`s / a si
 
 ### 5.2 `DistortionController` (port of `use-distortion.ts`)
 
-- `begin`, `update`, `end`, `setTrackWidth`.
-- Uses Flutter's `SpringSimulation`/`SpringDescription(mass, stiffness, damping)` for the
-  Reanimated `withSpring` calls — RN's `{damping: 18, mass: 0.9, stiffness: 240}` maps 1:1.
-- Animated values: `translateY`, `scaleX`, `pressedScale`, `transformOriginX`,
-  `touchFeedbackOpacity`.
+Verified against the vendored source (`reference/react-native-jelly-tabs/src/hooks/use-distortion.ts`
+@ `67f47f2`): only two of the five animated values are ever spring-driven; the rest are direct,
+synchronously-computed assignments. This matters for engine choice (§11) — it means no value here
+ever needs continuous per-frame retargeting of a running spring.
+
+- **Spring-driven (fire-and-forget, `withSpring` → Flutter `SpringSimulation`):**
+  - `begin()` — `pressedScale` animates `1 → distortion.pressedScale`; `touchFeedbackOpacity`
+    animates `0 → 1`. Both use `distortion.spring` (`{damping: 18, mass: 0.9, stiffness: 240}`).
+  - `end()` — `translateY → 0`, `scaleX → 1`, `pressedScale → 1`, `touchFeedbackOpacity → 0`, all
+    via `distortion.spring`; `transformOriginX` resets to `trackWidth / 2` once the `scaleX` spring
+    finishes.
+  - Flutter: `AnimationController.animateWith(SpringSimulation(spring, controller.value, target,
+    controller.velocity))` per value. Starting a new `animateWith` while one is in flight
+    interrupts it and `controller.velocity` reflects the in-flight simulation's current velocity —
+    this reproduces Reanimated's "retarget from current value+velocity, cancel the previous
+    animation" behavior (RN calls `cancelAnimation` explicitly in `begin()`) without any custom
+    stepper.
+- **Direct, computed every frame during `update()` (no spring, no interpolation):**
+  - `progress = min(|verticalTranslation| / max(distanceForMaxDistortion, 1e-4), 1)`
+  - `translateY = dragOriginY + rubberBand(verticalTranslation, trackHeight, verticalDrag.rubberBand) * verticalDrag.follow`
+    (`dragOriginY` is `translateY`'s value captured at `begin()`, so a new drag starting before the
+    previous release-spring finishes compounds correctly instead of jumping)
+  - `scaleX = 1 - progress * verticalDrag.distortion`
+  - `transformOriginX` = clamped pointer X (via `getPointerOrigin`), tracking the finger directly.
+  - Flutter: plain field assignment on each `updateGesture` call — these three do **not** go
+    through `SpringSimulation`/`ValueNotifier` interpolation, just direct value + `notifyListeners()`.
+- `setTrackWidth` — recenters `transformOriginX` to `trackWidth / 2`.
 
 ## 6. Gesture Layer
 
@@ -237,6 +263,12 @@ Defaults are copied verbatim from RN (see `docs/design.md` §5.5).
 - The visual-only layers (surface, pill, icons, glow) are excluded from the semantics tree
   (`ExcludeSemantics`) so screen readers hit exactly one tab node per item, like RN's
   `accessibilityTabsRow`.
+- **Keyboard/focus (web/desktop, no RN equivalent).** Each tab is wrapped in a `Focus` node
+  (traversal order = item order); `Enter`/`Space` while focused calls the same `activateTab(index)`
+  path as a tap, via `Actions`/`CallbackAction` on `ActivateIntent`. Focus ring uses the default
+  Flutter focus highlight (no custom styling required for v0.1.0). This has no RN source to port
+  from — RN targets touch only — so it's new surface area, not a port, and is tested separately
+  from behavior-parity tests.
 
 ## 9. Testing Strategy
 
@@ -266,8 +298,8 @@ with fixed `dtMs`. Follow VGV `animations` reference (`injected controllers`, `a
   `create-project` skill.
 - Lints: `very_good_analysis`; `flutter analyze` clean.
 - Format: `dart format --set-exit-if-changed`.
-- Tests: `flutter test` with coverage gate (default 100% on the pure-math layer; package-level
-  target configurable).
+- Tests: `flutter test` with coverage gate — **100%** on `lib/src/config/` and `lib/src/math/`,
+  **90%+** package-wide (see `docs/design.md` §8).
 - Web: `flutter test --platform chrome` for the pure-Dart layers where relevant.
 - CI: GitHub Actions matrix (analyze → format → test → coverage → build example on android/ios/web),
   mirroring VGV `green-gate` gate order.
@@ -276,7 +308,7 @@ with fixed `dtMs`. Follow VGV `animations` reference (`injected controllers`, `a
 
 | Risk | Mitigation |
 | --- | --- |
-| Reanimated `withSpring` ≠ Flutter `SpringSimulation` in edge cases | Restrict `withSpring` use to distortion only; verify visually against RN demo; tune only if needed |
+| Reanimated `withSpring` ≠ Flutter `SpringSimulation` in edge cases | **Resolved (§5.2).** Verified against source: `DistortionController` only springs on `begin()`/`end()` (fire-and-forget, never retargeted mid-drag) — `SpringSimulation` via `AnimationController.animateWith(current value, current velocity)` reproduces Reanimated's retarget-and-cancel semantics exactly. Mid-drag `translateY`/`scaleX`/`transformOriginX` are direct computed assignments in RN too, not springs — ported the same way, no interpolation engine needed there |
 | `ClipPath` reclip performance on every frame | Reclip only on `ValueNotifier` change; small clip subtree (`RepaintBoundary`) |
 | Velocity-shear sign conventions | Transcribe `getPillMaskStyle`/`pillContentStyle` math verbatim; frame-sequence tests pin exact values |
 | Web parity (hover/scroll vs touch) | `Listener` works on web; example QA on web + native |
