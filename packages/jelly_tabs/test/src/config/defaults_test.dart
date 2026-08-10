@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jelly_tabs/src/config/defaults.dart';
 
@@ -32,19 +30,31 @@ void main() {
 
   group(DefaultJellyTabsColors, () {
     test('activeContent is #11100F', () {
-      expect(DefaultJellyTabsColors.activeContent.value, 0xFF11100F);
+      expect(
+        DefaultJellyTabsColors.activeContent.toARGB32(),
+        0xFF11100F,
+      );
     });
 
     test('inactiveContent is #B8B4AD', () {
-      expect(DefaultJellyTabsColors.inactiveContent.value, 0xFFB8B4AD);
+      expect(
+        DefaultJellyTabsColors.inactiveContent.toARGB32(),
+        0xFFB8B4AD,
+      );
     });
 
     test('selectedSurface is #F2EEE7', () {
-      expect(DefaultJellyTabsColors.selectedSurface.value, 0xFFF2EEE7);
+      expect(
+        DefaultJellyTabsColors.selectedSurface.toARGB32(),
+        0xFFF2EEE7,
+      );
     });
 
     test('surface is #22211F', () {
-      expect(DefaultJellyTabsColors.surface.value, 0xFF22211F);
+      expect(
+        DefaultJellyTabsColors.surface.toARGB32(),
+        0xFF22211F,
+      );
     });
   });
 

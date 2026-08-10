@@ -1,79 +1,7 @@
 import 'dart:ui';
 
-class SpringConfig {
-  const SpringConfig({required this.stiffness, required this.dampingRatio});
-
-  final double stiffness;
-  final double dampingRatio;
-}
-
-class DistortionSpringConfig {
-  const DistortionSpringConfig({
-    required this.damping,
-    required this.mass,
-    required this.stiffness,
-  });
-
-  final double damping;
-  final double mass;
-  final double stiffness;
-}
-
-class PillJellySpringsConfig {
-  const PillJellySpringsConfig({
-    required this.panel,
-    required this.press,
-    required this.scaleX,
-    required this.scaleY,
-    required this.value,
-    required this.velocity,
-  });
-
-  final SpringConfig panel;
-  final SpringConfig press;
-  final SpringConfig scaleX;
-  final SpringConfig scaleY;
-  final SpringConfig value;
-  final SpringConfig velocity;
-}
-
-class PillJellyFrameConfig {
-  const PillJellyFrameConfig({
-    required this.releaseDistanceFraction,
-    required this.springs,
-  });
-
-  final double releaseDistanceFraction;
-  final PillJellySpringsConfig springs;
-}
-
-class TouchFeedbackConfig {
-  const TouchFeedbackConfig({
-    required this.middleOpacityRatio,
-    required this.opacity,
-    required this.radius,
-    required this.scale,
-  });
-
-  final double middleOpacityRatio;
-  final double opacity;
-  final double radius;
-  final double scale;
-}
-
-class VerticalDragConfig {
-  const VerticalDragConfig({
-    required this.distortion,
-    required this.distanceForMaxDistortion,
-    required this.follow,
-    required this.rubberBand,
-  });
-
-  final double distortion;
-  final double distanceForMaxDistortion;
-  final double follow;
-  final double rubberBand;
-}
+import 'package:jelly_tabs/src/config/config.dart';
+import 'package:jelly_tabs/src/config/spring_config.dart';
 
 abstract final class DefaultJellyTabsLayout {
   static const iconSize = 28.0;
@@ -85,10 +13,10 @@ abstract final class DefaultJellyTabsLayout {
 }
 
 abstract final class DefaultJellyTabsColors {
-  static final activeContent = Color(0xFF11100F);
-  static final inactiveContent = Color(0xFFB8B4AD);
-  static final selectedSurface = Color(0xFFF2EEE7);
-  static final surface = Color(0xFF22211F);
+  static const activeContent = Color(0xFF11100F);
+  static const inactiveContent = Color(0xFFB8B4AD);
+  static const selectedSurface = Color(0xFFF2EEE7);
+  static const surface = Color(0xFF22211F);
 }
 
 abstract final class DefaultJellyTabsOpacity {
