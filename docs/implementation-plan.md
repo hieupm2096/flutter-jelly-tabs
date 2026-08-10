@@ -365,15 +365,15 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Create: `packages/jelly_tabs/lib/src/widgets/jelly_tab_bar_headless.dart`
 - Modify: `packages/jelly_tabs/lib/jelly_tabs.dart` (barrel export)
 
-- [ ] **Step 1: Write the failing test** — renders track with surface color/opacity, inactive
+- [x] **Step 1: Write the failing test** — renders track with surface color/opacity, inactive
       icons, no pill when `items` empty, pill+selected surface when selected, badge visible,
       maxWidth centers the bar.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — widget assembling the layer tree (§3.1 architecture) with
-      `SingleTickerProviderStateMixin`, controllers, `ListenableBuilder`s, `RepaintBoundary` on
-      the clip, `ExcludeSemantics` on visual layers.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: jelly tab bar headless (render)"`
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — widget assembling the layer tree (§3.1 architecture) with
+      `TickerProviderStateMixin`, controllers, `ListenableBuilder`s, `RepaintBoundary` on the
+      clip, `ExcludeSemantics` on visual layers.
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: jelly tab bar headless (render)"`
 
 ### Task 4.5: Gesture layer + semantics
 
