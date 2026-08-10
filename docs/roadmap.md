@@ -30,12 +30,12 @@ other; `S1`/`S2` are the immediate next milestones.
 - [x] `docs/roadmap.md` — this file
 - [x] `docs/index.md` — index
 
-### 🚧 S1 — Scaffold (follow-up session 1)
+### ✅ S1 — Scaffold (DONE — 2026-08-10)
 
-- [ ] Workspace: root `pubspec.yaml` (native pub workspaces), CI workflow, `.gitignore`
-- [ ] Vendor `reference/react-native-jelly-tabs/` @ pinned commit `67f47f2` for fidelity re-checks
-- [ ] `jelly_tabs` package from Very Good CLI template (`very_good_analysis`, barrel, `pumpApp`)
-- [ ] `dart pub get` at workspace root; gates green (analyze/format/test baseline)
+- [x] Workspace: root `pubspec.yaml` (native pub workspaces), CI workflow, `.gitignore`
+- [x] Vendor `reference/react-native-jelly-tabs/` @ pinned commit `67f47f2` for fidelity re-checks
+- [x] `jelly_tabs` package from Very Good CLI template (`very_good_analysis`, barrel, `pumpApp`)
+- [x] `dart pub get` at workspace root; gates green (analyze/format/test baseline)
 - **Exit criteria:** clean repo, CI green, package + example scaffolding compiles.
 
 ### ⏳ S2 — Core engine (follow-up session 2)
