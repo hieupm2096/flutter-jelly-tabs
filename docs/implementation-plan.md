@@ -315,6 +315,11 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 
 ## Phase 4 — Widgets
 
+> **Phase 4 complete** (`2fd8f88`): Tasks 4.1–4.5 implemented and committed.
+> Note: the plan's `SingleTickerProviderStateMixin` was replaced with `TickerProviderStateMixin`
+> — the controller creates 5 tickers (pill ticker + 4 distortion spring controllers), so a
+> single-ticker mixin would assert.
+
 ### Task 4.1: `TouchFeedback` widget
 
 **Files:**
@@ -401,12 +406,14 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Create: `packages/jelly_tabs/test/src/widgets/golden_test.dart`
 - Modify: `packages/jelly_tabs/dart_test.yaml` (golden tag config)
 
-- [ ] **Step 1: Write the test** — `testWidgets` with `TestTag.golden` asserting rest state,
+- [x] **Step 1: Write the test** — `testWidgets` with `TestTag.golden` asserting rest state,
       selected state, pressed pill (pump fixed progress), badge appearance — via `pumpApp` +
       `matchesGoldenFile`.
-- [ ] **Step 2: Generate goldens** — `flutter test --update-goldens`.
-- [ ] **Step 3: Review generated images** against RN demo screenshots (manual parity check).
-- [ ] **Step 4: Commit** — `git commit -am "test: golden baseline"`
+- [x] **Step 2: Generate goldens** — `flutter test --update-goldens`.
+- [x] **Step 3: Review generated images** against RN demo screenshots (manual parity check).
+      The pressed golden surfaced a real crash: the `touchFeedbackOpacity` spring overshoots
+      past 1.0, so `TouchFeedback` now clamps its `Opacity` to [0, 1].
+- [x] **Step 4: Commit** — `git commit -am "test: golden baseline"`
 
 ## Phase 6 — Example App (web/android/iOS)
 

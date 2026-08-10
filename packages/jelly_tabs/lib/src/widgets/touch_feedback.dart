@@ -43,7 +43,7 @@ class TouchFeedback extends StatelessWidget {
     return Transform.translate(
       offset: translate,
       child: Opacity(
-        opacity: opacity,
+        opacity: opacity.clamp(0.0, 1.0),
         child: Container(
           width: diameter,
           height: diameter,
