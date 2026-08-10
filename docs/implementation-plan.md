@@ -382,15 +382,15 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Create: `packages/jelly_tabs/lib/src/gestures/jelly_tab_bar_gesture.dart`
 - Modify: `packages/jelly_tabs/lib/src/widgets/jelly_tab_bar_headless.dart`
 
-- [ ] **Step 1: Write the failing test** — tap selects tab + fires `onTabPress`/`onTabChange`;
+- [x] **Step 1: Write the failing test** — tap selects tab + fires `onTabPress`/`onTabChange`;
       drag across tabs selects on release; long-press fires `onTabLongPress`; `onTabPress`
       returning false rejects + restores; controlled `selectedIndex` animates on external change;
       semantics: role tab, selected state, tap action, long-press action.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `Listener`-based pointer tracking (down/move/up/cancel) feeding
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `Listener`-based pointer tracking (down/move/up/cancel) feeding
       controller gesture methods, long-press `Timer`, and `Semantics` per tab.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: jelly tab gestures + semantics"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: jelly tab gestures + semantics"`
 
 ## Phase 5 — Golden Tests
 

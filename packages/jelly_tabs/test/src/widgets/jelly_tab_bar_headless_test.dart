@@ -1,3 +1,4 @@
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jelly_tabs/jelly_tabs.dart';
 
@@ -48,6 +49,11 @@ const _badgedItems = [
 
 Future<void> pumpBar(WidgetTester tester, Widget bar) async {
   await tester.pumpAppWidget(bar);
+  await tester.pump();
+}
+
+Future<void> settle(WidgetTester tester) async {
+  await tester.pump(const Duration(milliseconds: 600));
   await tester.pump();
 }
 
@@ -126,6 +132,168 @@ void main() {
       );
       expect(tester.getSize(track), const Size(400, 64));
       expect(tester.getTopLeft(track).dx, closeTo(200, 1e-3));
+    });
+
+    group('gestures', () {
+      testWidgets('tap selects the tab and fires onTabPress and onTabChange', (
+        tester,
+      ) async {
+        final pressEvents = <JellyTabsChangeEvent>[];
+        final changeEvents = <JellyTabsChangeEvent>[];
+        await pumpBar(
+          tester,
+          JellyTabBarHeadless(
+            items: _items,
+            onTabPress: (event) {
+              pressEvents.add(event);
+              return true;
+            },
+            onTabChange: changeEvents.add,
+          ),
+        );
+
+        await tester.tap(find.byType(JellyTabBarHeadless));
+        await settle(tester);
+
+        expect(pressEvents, hasLength(1));
+        expect(pressEvents.single.index, 1);
+        expect(changeEvents, hasLength(1));
+        expect(changeEvents.single.index, 1);
+      });
+
+      testWidgets('drag across tabs selects the nearest tab on release', (
+        tester,
+      ) async {
+        final changeEvents = <JellyTabsChangeEvent>[];
+        await pumpBar(
+          tester,
+          JellyTabBarHeadless(items: _items, onTabChange: changeEvents.add),
+        );
+
+        final gesture = await tester.startGesture(const Offset(250, 300));
+        await tester.pump();
+        await gesture.moveTo(const Offset(550, 300));
+        await tester.pump();
+        await gesture.up();
+        await settle(tester);
+
+        expect(changeEvents, hasLength(1));
+        expect(changeEvents.single.index, 1);
+      });
+
+      testWidgets('long-press fires onTabLongPress for the held tab', (
+        tester,
+      ) async {
+        final longPresses = <JellyTabsChangeEvent>[];
+        await pumpBar(
+          tester,
+          JellyTabBarHeadless(items: _items, onTabLongPress: longPresses.add),
+        );
+
+        final gesture = await tester.startGesture(const Offset(400, 300));
+        await tester.pump(const Duration(milliseconds: 600));
+        await gesture.up();
+        await settle(tester);
+
+        expect(longPresses, hasLength(1));
+        expect(longPresses.single.index, 1);
+      });
+
+      testWidgets('rejected press restores the prior selection', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        final changeEvents = <JellyTabsChangeEvent>[];
+        await pumpBar(
+          tester,
+          JellyTabBarHeadless(
+            items: _items,
+            onTabPress: (_) => false,
+            onTabChange: changeEvents.add,
+          ),
+        );
+
+        await tester.tap(find.byType(JellyTabBarHeadless));
+        await settle(tester);
+
+        expect(changeEvents, isEmpty);
+        final homeTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Home'),
+        );
+        expect(homeTab.properties.selected, isTrue);
+        final searchTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Search'),
+        );
+        expect(searchTab.properties.selected, isFalse);
+        handle.dispose();
+      });
+    });
+
+    group('controlled selection', () {
+      testWidgets('animates the pill when selectedIndex changes externally', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        await tester.pumpAppWidget(
+          const JellyTabBarHeadless(items: _items, selectedIndex: 0),
+        );
+        await tester.pump();
+
+        await tester.pumpAppWidget(
+          const JellyTabBarHeadless(items: _items, selectedIndex: 1),
+        );
+        await settle(tester);
+
+        final searchTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Search'),
+        );
+        expect(searchTab.properties.selected, isTrue);
+        final homeTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Home'),
+        );
+        expect(homeTab.properties.selected, isFalse);
+        handle.dispose();
+      });
+    });
+
+    group('semantics', () {
+      testWidgets('exposes tab role, selected state, and tap actions', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        await pumpBar(tester, const JellyTabBarHeadless(items: _items));
+
+        final homeTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Home'),
+        );
+        expect(homeTab.properties.role, SemanticsRole.tab);
+        expect(homeTab.properties.selected, isTrue);
+        expect(homeTab.properties.onTap, isNotNull);
+        expect(homeTab.properties.onLongPress, isNull);
+
+        final searchTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Search'),
+        );
+        expect(searchTab.properties.selected, isFalse);
+        expect(searchTab.properties.onTap, isNotNull);
+        handle.dispose();
+      });
+
+      testWidgets('adds a long-press action when onTabLongPress is set', (
+        tester,
+      ) async {
+        final handle = tester.ensureSemantics();
+        await pumpBar(
+          tester,
+          JellyTabBarHeadless(items: _items, onTabLongPress: (_) {}),
+        );
+
+        final homeTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Home'),
+        );
+        expect(homeTab.properties.onLongPress, isNotNull);
+        handle.dispose();
+      });
     });
   });
 }

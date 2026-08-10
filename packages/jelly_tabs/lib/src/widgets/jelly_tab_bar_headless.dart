@@ -1,9 +1,11 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:jelly_tabs/src/config/config.dart';
 import 'package:jelly_tabs/src/config/defaults.dart';
 import 'package:jelly_tabs/src/controllers/pill_jelly_controller.dart';
+import 'package:jelly_tabs/src/gestures/jelly_tab_bar_gesture.dart';
 import 'package:jelly_tabs/src/math/animation_math.dart';
 import 'package:jelly_tabs/src/models/jelly_tabs_change_event.dart';
 import 'package:jelly_tabs/src/models/jelly_tabs_item.dart';
@@ -218,21 +220,31 @@ class _JellyTabBarHeadlessState extends State<JellyTabBarHeadless>
           child: SizedBox(
             width: widget.maxWidth,
             height: trackHeight,
-            child: ListenableBuilder(
-              listenable: Listenable.merge([
-                _controller,
-                _controller.distortion,
-              ]),
-              builder: (context, _) {
-                return _buildTrack(
-                  trackHeight: trackHeight,
-                  itemHeight: itemHeight,
-                  trackInset: trackInset,
-                  geometryScale: geometryScale,
-                  width: width,
-                  inactiveTabs: inactiveTabs,
-                );
-              },
+            child: JellyTabBarGestureDetector(
+              controller: _controller,
+              recording: widget.recording,
+              trackInset: trackInset,
+              trackHeight: trackHeight,
+              tabCount: widget.items.length,
+              onTabLongPress: widget.onTabLongPress == null
+                  ? null
+                  : _handleTabLongPress,
+              child: ListenableBuilder(
+                listenable: Listenable.merge([
+                  _controller,
+                  _controller.distortion,
+                ]),
+                builder: (context, _) {
+                  return _buildTrack(
+                    trackHeight: trackHeight,
+                    itemHeight: itemHeight,
+                    trackInset: trackInset,
+                    geometryScale: geometryScale,
+                    width: width,
+                    inactiveTabs: inactiveTabs,
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -303,7 +315,46 @@ class _JellyTabBarHeadlessState extends State<JellyTabBarHeadless>
                 ),
               ),
             ),
+            _buildSemanticsRow(trackInset: trackInset),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _handleTabLongPress(int index) {
+    if (index < 0 || index >= widget.items.length) return;
+    final item = widget.items[index];
+    widget.onTabLongPress?.call(
+      JellyTabsChangeEvent(index: index, item: item),
+    );
+  }
+
+  Widget _buildSemanticsRow({required double trackInset}) {
+    final selectedIndex = _controller.selectedIndex;
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: trackInset),
+          child: Row(
+            children: [
+              for (var index = 0; index < widget.items.length; index++)
+                Expanded(
+                  child: Semantics(
+                    role: SemanticsRole.tab,
+                    label:
+                        widget.items[index].accessibilityLabel ??
+                        widget.items[index].label,
+                    selected: index == selectedIndex,
+                    onTap: () => _controller.activateTab(index),
+                    onLongPress: widget.onTabLongPress == null
+                        ? null
+                        : () => _handleTabLongPress(index),
+                    child: const SizedBox.expand(),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
