@@ -321,12 +321,12 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Test: `packages/jelly_tabs/test/src/widgets/touch_feedback_test.dart`
 - Create: `packages/jelly_tabs/lib/src/widgets/touch_feedback.dart`
 
-- [ ] **Step 1: Write the failing test** — renders gradient container sized `diameter`; positioned
+- [x] **Step 1: Write the failing test** — renders gradient container sized `diameter`; positioned
       by animated translate; stops match `centerOpacity`/`middleOpacity`/0.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `TouchFeedback` using `BoxDecoration(RadialGradient(...))` + `Transform`.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: touch feedback widget"`
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `TouchFeedback` using `BoxDecoration(RadialGradient(...))` + `Transform`.
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: touch feedback widget"`
 
 ### Task 4.2: `TabItem` widget
 
