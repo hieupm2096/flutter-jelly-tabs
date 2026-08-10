@@ -14,6 +14,7 @@ import 'package:jelly_tabs/src/models/jelly_tabs_item.dart';
 class PillJellyController extends ChangeNotifier {
   PillJellyController({
     required List<JellyTabsItem> items,
+    required TickerProvider vsync,
     JellyTabsConfig config = const JellyTabsConfig(
       layout: JellyTabsLayout(
         iconSize: 28,
@@ -31,14 +32,12 @@ class PillJellyController extends ChangeNotifier {
     bool recording = false,
     bool? Function(JellyTabsChangeEvent event)? onTabPress,
     void Function(JellyTabsChangeEvent event)? onTabChange,
-    void Function(JellyTabsChangeEvent event)? onTabLongPress,
-  })  : _config = config,
-        _items = items,
-        _recording = recording,
-        _onTabPress = onTabPress,
-        _onTabChange = onTabChange,
-        _onTabLongPress = onTabLongPress,
-        _geometryScale = displayScale > 0 ? displayScale : 1 {
+  }) : _config = config,
+       _items = items,
+       _recording = recording,
+       _onTabPress = onTabPress,
+       _onTabChange = onTabChange,
+       _geometryScale = displayScale > 0 ? displayScale : 1 {
     final initialIndex = _getControlledSelectedIndex(
       selectedIndex,
       items.length,
@@ -53,7 +52,9 @@ class PillJellyController extends ChangeNotifier {
       config: config.distortion,
       layout: config.layout,
       displayScale: _geometryScale,
+      vsync: vsync,
     );
+    _ticker = vsync.createTicker(_onTick);
   }
 
   final JellyTabsConfig _config;
@@ -61,11 +62,11 @@ class PillJellyController extends ChangeNotifier {
   final bool _recording;
   final bool? Function(JellyTabsChangeEvent event)? _onTabPress;
   final void Function(JellyTabsChangeEvent event)? _onTabChange;
-  final void Function(JellyTabsChangeEvent event)? _onTabLongPress;
   final double _geometryScale;
 
   late final DistortionController _distortion;
   late final PillJellyFrameState _frameState;
+  late final Ticker _ticker;
 
   int _selectedIndex = 0;
   int get selectedIndex => _selectedIndex;
@@ -76,25 +77,30 @@ class PillJellyController extends ChangeNotifier {
   double _dragStartTarget = 0;
   double _dragStartPanelOffset = 0;
 
-  // Ticker
-  Ticker? _ticker;
+  // Frame loop settle deadline (in ticker elapsed time)
+  Duration? _idleDeadline;
+  Duration? _lastElapsed;
 
   double get trackWidth => _distortion.trackWidth;
   double get _trackInset => _config.layout.trackInset * _geometryScale;
-  double get _tabWidth =>
-      getTabWidth(trackWidth, _trackInset, _items.length);
+  double get _tabWidth => getTabWidth(trackWidth, _trackInset, _items.length);
 
   // Widget-facing style accessors
-  Offset get pillMaskTranslation =>
-      Offset(_frameState.value * _tabWidth, 0);
+  Offset get pillMaskTranslation => Offset(_frameState.value * _tabWidth, 0);
   double get pillMaskScaleX => _getPillMaskScaleX();
   double get pillMaskScaleY => _getPillMaskScaleY();
   double get panelOffset => getHorizontalPanelOffset(
-        _frameState.rawPanelOffset,
-        trackWidth,
-        _geometryScale,
-      );
+    _frameState.rawPanelOffset,
+    trackWidth,
+    _geometryScale,
+  );
   double get activeItemScale => 1 + 0.2 * _frameState.pressProgress;
+
+  @visibleForTesting
+  PillJellyFrameState get frameState => _frameState;
+
+  @visibleForTesting
+  bool get isFrameLoopActive => _ticker.isActive;
 
   // Distortion passthroughs
   DistortionController get distortion => _distortion;
@@ -118,31 +124,48 @@ class PillJellyController extends ChangeNotifier {
     return _frameState.baseScaleY * (1 - scaleYCorrection);
   }
 
-  void setTicker(Ticker ticker) {
-    _ticker = ticker;
-    ticker.start();
-  }
-
   void _onTick(Duration elapsed) {
+    final lastElapsed = _lastElapsed;
+    _lastElapsed = elapsed;
+    final dtMs = lastElapsed == null
+        ? 16
+        : math.max((elapsed - lastElapsed).inMilliseconds, 1);
     advancePillJellyFrame(
       _frameState,
       _config.pillJelly.frameConfig,
       tabCount: _items.length,
-      dtMs: 16, // Fixed 60fps timestep
+      dtMs: dtMs,
     );
+    final deadline = _idleDeadline;
+    if (deadline != null && elapsed >= deadline) {
+      _idleDeadline = null;
+      _ticker.stop();
+    }
     notifyListeners();
+  }
+
+  /// Mirrors RN's `setFrameLoopActive`: start the ticker immediately, or
+  /// schedule it to stop after a 500ms settle delay. A new activation
+  /// cancels a pending stop so the loop is never halted mid-gesture.
+  void _setFrameLoopActive(bool active) {
+    if (active) {
+      _idleDeadline = null;
+      if (!_ticker.isActive) {
+        _ticker.start();
+      }
+    } else {
+      _idleDeadline =
+          (_lastElapsed ?? Duration.zero) + const Duration(milliseconds: 500);
+      if (!_ticker.isActive) {
+        _ticker.start();
+      }
+    }
   }
 
   void setTrackWidth(double width) {
     _distortion.setTrackWidth(width);
     notifyListeners();
   }
-
-  void setTrackPosition(double pageX) {
-    _webTrackPageX = pageX;
-  }
-
-  double _webTrackPageX = double.nan;
 
   void beginGesture(double localX, double localY, double absoluteX) {
     _distortion.begin(localX, localY, absoluteX);
@@ -161,7 +184,7 @@ class PillJellyController extends ChangeNotifier {
     _frameState.releasePending = 0;
     _frameState.pressTarget = 1;
     _frameState.shapeTarget = _config.pillJelly.pressedScale;
-    _ticker?.start();
+    _setFrameLoopActive(true);
     notifyListeners();
   }
 
@@ -177,8 +200,10 @@ class PillJellyController extends ChangeNotifier {
     final hTrans = _recording ? verticalTranslation : horizontalTranslation;
     final vTrans = _recording ? -horizontalTranslation : verticalTranslation;
 
-    _frameState.targetValue = (_dragStartTarget + hTrans / tabWidth)
-        .clamp(0.0, getMaxTabIndex(_items.length).toDouble());
+    _frameState.targetValue = (_dragStartTarget + hTrans / tabWidth).clamp(
+      0.0,
+      getMaxTabIndex(_items.length).toDouble(),
+    );
     _frameState.rawPanelOffset = _dragStartPanelOffset + hTrans;
 
     _distortion.update(vTrans, absoluteX, localX);
@@ -186,7 +211,7 @@ class PillJellyController extends ChangeNotifier {
       _movedDistance,
       math.max(hTrans.abs(), vTrans.abs()),
     );
-    _ticker?.start();
+    _setFrameLoopActive(true);
     notifyListeners();
   }
 
@@ -212,11 +237,7 @@ class PillJellyController extends ChangeNotifier {
       _confirmTabPress(nextIndex);
     }
 
-    // Schedule ticker stop after 500ms settle
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _ticker?.stop();
-    });
-
+    _setFrameLoopActive(false);
     notifyListeners();
   }
 
@@ -226,10 +247,8 @@ class PillJellyController extends ChangeNotifier {
     final nextIndex = index.clamp(0, getMaxTabIndex(_items.length));
     _frameState.targetValue = nextIndex.toDouble();
     _frameState.releasePending = 1;
-    _ticker?.start();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _ticker?.stop();
-    });
+    _setFrameLoopActive(true);
+    _setFrameLoopActive(false);
     _confirmTabPress(nextIndex);
     notifyListeners();
   }
@@ -240,7 +259,12 @@ class PillJellyController extends ChangeNotifier {
 
     final accepted = _onTabPress?.call(event);
     if (accepted == false) {
-      _frameState.targetValue = _selectedIndex.toDouble();
+      // The controlled prop will not change after a rejected press, so
+      // restore the pill directly. Guard against restoring to an empty
+      // selection (-1), which would otherwise animate toward tab 0.
+      if (_selectedIndex >= 0) {
+        _frameState.targetValue = _selectedIndex.toDouble();
+      }
       _frameState.releasePending = 1;
       _frameState.pressTarget = 0;
       _frameState.shapeTarget = 1;
@@ -265,10 +289,8 @@ class PillJellyController extends ChangeNotifier {
     _frameState.releasePending = 1;
     _frameState.pressTarget = 0;
     _frameState.shapeTarget = 1;
-    _ticker?.start();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _ticker?.stop();
-    });
+    _setFrameLoopActive(true);
+    _setFrameLoopActive(false);
     notifyListeners();
   }
 
@@ -281,8 +303,7 @@ class PillJellyController extends ChangeNotifier {
 
   @override
   void dispose() {
-    _ticker?.stop();
-    _ticker?.dispose();
+    _ticker.dispose();
     _distortion.dispose();
     super.dispose();
   }

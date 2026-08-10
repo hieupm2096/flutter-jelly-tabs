@@ -35,13 +35,13 @@ class JellyTabsLayout {
 
   @override
   int get hashCode => Object.hash(
-        iconSize,
-        itemHeight,
-        maskOverscanX,
-        maskOverscanY,
-        trackHeight,
-        trackInset,
-      );
+    iconSize,
+    itemHeight,
+    maskOverscanX,
+    maskOverscanY,
+    trackHeight,
+    trackInset,
+  );
 }
 
 @immutable
@@ -462,52 +462,65 @@ JellyTabsConfig resolveJellyTabsConfig([JellyTabsConfigOverride? override]) {
     pillJelly: PillJellyConfig(
       pressedScale:
           pillJellyOverride?.pressedScale ?? DefaultPillJelly.pressedScale,
-      snapOnPointerDown: pillJellyOverride?.snapOnPointerDown ??
+      snapOnPointerDown:
+          pillJellyOverride?.snapOnPointerDown ??
           DefaultPillJelly.snapOnPointerDown,
       frameConfig: PillJellyFrameConfig(
         releaseDistanceFraction:
             frameConfigOverride?.releaseDistanceFraction ??
-                DefaultPillJelly.frameConfig.releaseDistanceFraction,
+            DefaultPillJelly.frameConfig.releaseDistanceFraction,
         springs: PillJellySpringsConfig(
-          panel: springsOverride?.panel ??
+          panel:
+              springsOverride?.panel ??
               DefaultPillJelly.frameConfig.springs.panel,
-          press: springsOverride?.press ??
+          press:
+              springsOverride?.press ??
               DefaultPillJelly.frameConfig.springs.press,
-          scaleX: springsOverride?.scaleX ??
+          scaleX:
+              springsOverride?.scaleX ??
               DefaultPillJelly.frameConfig.springs.scaleX,
-          scaleY: springsOverride?.scaleY ??
+          scaleY:
+              springsOverride?.scaleY ??
               DefaultPillJelly.frameConfig.springs.scaleY,
-          value: springsOverride?.value ??
+          value:
+              springsOverride?.value ??
               DefaultPillJelly.frameConfig.springs.value,
-          velocity: springsOverride?.velocity ??
+          velocity:
+              springsOverride?.velocity ??
               DefaultPillJelly.frameConfig.springs.velocity,
         ),
       ),
     ),
     distortion: DistortionConfig(
-      pressedScale: distortionOverride?.pressedScale ??
-          DefaultDistortion.pressedScale,
+      pressedScale:
+          distortionOverride?.pressedScale ?? DefaultDistortion.pressedScale,
       touchFeedback: TouchFeedbackConfig(
         middleOpacityRatio:
             touchFeedbackOverride?.middleOpacityRatio ??
-                DefaultDistortion.touchFeedback.middleOpacityRatio,
-        opacity: touchFeedbackOverride?.opacity ??
+            DefaultDistortion.touchFeedback.middleOpacityRatio,
+        opacity:
+            touchFeedbackOverride?.opacity ??
             DefaultDistortion.touchFeedback.opacity,
-        radius: touchFeedbackOverride?.radius ??
+        radius:
+            touchFeedbackOverride?.radius ??
             DefaultDistortion.touchFeedback.radius,
-        scale: touchFeedbackOverride?.scale ??
+        scale:
+            touchFeedbackOverride?.scale ??
             DefaultDistortion.touchFeedback.scale,
       ),
       spring: distortionOverride?.spring ?? DefaultDistortion.spring,
       verticalDrag: VerticalDragConfig(
-        distortion: verticalDragOverride?.distortion ??
+        distortion:
+            verticalDragOverride?.distortion ??
             DefaultDistortion.verticalDrag.distortion,
         distanceForMaxDistortion:
             verticalDragOverride?.distanceForMaxDistortion ??
-                DefaultDistortion.verticalDrag.distanceForMaxDistortion,
-        follow: verticalDragOverride?.follow ??
+            DefaultDistortion.verticalDrag.distanceForMaxDistortion,
+        follow:
+            verticalDragOverride?.follow ??
             DefaultDistortion.verticalDrag.follow,
-        rubberBand: verticalDragOverride?.rubberBand ??
+        rubberBand:
+            verticalDragOverride?.rubberBand ??
             DefaultDistortion.verticalDrag.rubberBand,
       ),
     ),

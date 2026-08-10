@@ -50,7 +50,8 @@ SpringStep _advanceUnderdampedSpring(
 ) {
   final dampingFrequency = config.dampingRatio * naturalFrequency;
   final dampedFrequency =
-      naturalFrequency * math.sqrt(1 - config.dampingRatio * config.dampingRatio);
+      naturalFrequency *
+      math.sqrt(1 - config.dampingRatio * config.dampingRatio);
   final decay = math.exp(-dampingFrequency * deltaSeconds);
   final angle = dampedFrequency * deltaSeconds;
   final cosine = math.cos(angle);
@@ -59,7 +60,7 @@ SpringStep _advanceUnderdampedSpring(
       (velocity + dampingFrequency * displacement) / dampedFrequency;
   final velocityCoefficient =
       (dampingFrequency * velocity + config.stiffness * displacement) /
-          dampedFrequency;
+      dampedFrequency;
 
   return SpringStep(
     value:
@@ -80,7 +81,8 @@ SpringStep _advanceOverdampedSpring(
   // hyperbolic functions, keeping ratios above 1 (overdamped) from
   // producing NaN via sqrt of a negative number.
   final dampingFrequency = config.dampingRatio * naturalFrequency;
-  final dampedFrequency = naturalFrequency *
+  final dampedFrequency =
+      naturalFrequency *
       math.sqrt(config.dampingRatio * config.dampingRatio - 1);
   final decay = math.exp(-dampingFrequency * deltaSeconds);
   final angle = dampedFrequency * deltaSeconds;
@@ -90,14 +92,16 @@ SpringStep _advanceOverdampedSpring(
       (velocity + dampingFrequency * displacement) / dampedFrequency;
   final velocityCoefficient =
       (dampingFrequency * velocity + config.stiffness * displacement) /
-          dampedFrequency;
+      dampedFrequency;
 
   return SpringStep(
-    value: target +
+    value:
+        target +
         decay *
             (displacement * hyperbolicCosine +
                 positionCoefficient * hyperbolicSine),
-    velocity: decay *
+    velocity:
+        decay *
         (velocity * hyperbolicCosine - velocityCoefficient * hyperbolicSine),
   );
 }
@@ -107,8 +111,10 @@ SpringStep _advanceOverdampedSpring(
 SpringStep advanceSpring(
   double value,
   double velocity,
-  double target,
-  {required SpringConfig spring, required double dt,}) {
+  double target, {
+  required SpringConfig spring,
+  required double dt,
+}) {
   final displacement = value - target;
   if (_isSpringAtRest(displacement, velocity)) {
     return SpringStep(value: target, velocity: 0);
@@ -176,8 +182,10 @@ double easeOut(double input) {
   var parameter = x;
 
   for (var iteration = 0; iteration < _easeOutSearchIterations; iteration++) {
-    final bezierX =
-        _evaluateCubicBezierCoordinate(parameter, _easeOutControlPointX);
+    final bezierX = _evaluateCubicBezierCoordinate(
+      parameter,
+      _easeOutControlPointX,
+    );
 
     if (bezierX < x) {
       low = parameter;

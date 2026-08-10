@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'jelly_tabs_icon_builder.dart';
-import 'jelly_tabs_icon_props.dart';
 
 @immutable
 class JellyTabsItem {
@@ -44,14 +43,14 @@ class JellyTabsItem {
 
   @override
   int get hashCode => Object.hash(
-        key,
-        label,
-        activeIcon,
-        inactiveIcon,
-        accessibilityLabel,
-        labelStyle,
-        badge,
-        badgeStyle,
-        testID,
-      );
+    key,
+    label,
+    activeIcon,
+    inactiveIcon,
+    accessibilityLabel,
+    labelStyle,
+    badge,
+    badgeStyle,
+    testID,
+  );
 }

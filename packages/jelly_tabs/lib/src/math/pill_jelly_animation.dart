@@ -7,16 +7,20 @@ import 'package:jelly_tabs/src/math/animation_math.dart';
 /// Reanimated shared values in `pill-jelly-animation.ts`.
 class PillJellyFrameState {
   var baseScaleX = 1.0;
+  var baseScaleXRate = 0.0;
   var baseScaleY = 1.0;
+  var baseScaleYRate = 0.0;
   var filteredVelocity = 0.0;
+  var filteredVelocityRate = 0.0;
   var isDragging = 0.0;
   var pressProgress = 0.0;
+  var pressProgressRate = 0.0;
   var pressTarget = 0.0;
   var rawPanelOffset = 0.0;
+  var rawPanelOffsetVelocity = 0.0;
   var releasePending = 0.0;
   var shapeTarget = 1.0;
   var targetValue = 0.0;
-  var targetValueVelocity = 0.0;
   var value = 0.0;
   var valueVelocity = 0.0;
 }
@@ -50,23 +54,25 @@ void advancePillJellyFrame(
       : 0.0;
   final velocityStep = advanceSpring(
     state.filteredVelocity,
-    0,
+    state.filteredVelocityRate,
     velocityTarget,
     spring: config.springs.velocity,
     dt: dt,
   );
   state.filteredVelocity = velocityStep.value;
+  state.filteredVelocityRate = velocityStep.velocity;
 
   // rawPanelOffset only springs back when not dragging
   if (state.isDragging == 0) {
     final panelStep = advanceSpring(
       state.rawPanelOffset,
-      0,
+      state.rawPanelOffsetVelocity,
       0,
       spring: config.springs.panel,
       dt: dt,
     );
     state.rawPanelOffset = panelStep.value;
+    state.rawPanelOffsetVelocity = panelStep.velocity;
   }
 
   // settle released indicator
@@ -82,28 +88,31 @@ void advancePillJellyFrame(
 
   final pressStep = advanceSpring(
     state.pressProgress,
-    0,
+    state.pressProgressRate,
     state.pressTarget,
     spring: config.springs.press,
     dt: dt,
   );
   state.pressProgress = pressStep.value;
+  state.pressProgressRate = pressStep.velocity;
 
   final scaleXStep = advanceSpring(
     state.baseScaleX,
-    0,
+    state.baseScaleXRate,
     state.shapeTarget,
     spring: config.springs.scaleX,
     dt: dt,
   );
   state.baseScaleX = scaleXStep.value;
+  state.baseScaleXRate = scaleXStep.velocity;
 
   final scaleYStep = advanceSpring(
     state.baseScaleY,
-    0,
+    state.baseScaleYRate,
     state.shapeTarget,
     spring: config.springs.scaleY,
     dt: dt,
   );
   state.baseScaleY = scaleYStep.value;
+  state.baseScaleYRate = scaleYStep.velocity;
 }

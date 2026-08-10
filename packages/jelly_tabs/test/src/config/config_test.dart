@@ -158,8 +158,7 @@ void main() {
           radius: 150,
           scale: 2,
         ),
-        spring:
-            DistortionSpringConfig(damping: 18, mass: 0.9, stiffness: 240),
+        spring: DistortionSpringConfig(damping: 18, mass: 0.9, stiffness: 240),
         verticalDrag: VerticalDragConfig(
           distortion: 0.08,
           distanceForMaxDistortion: 700,
@@ -175,8 +174,7 @@ void main() {
           radius: 150,
           scale: 2,
         ),
-        spring:
-            DistortionSpringConfig(damping: 18, mass: 0.9, stiffness: 240),
+        spring: DistortionSpringConfig(damping: 18, mass: 0.9, stiffness: 240),
         verticalDrag: VerticalDragConfig(
           distortion: 0.08,
           distanceForMaxDistortion: 700,
@@ -259,8 +257,11 @@ void main() {
               radius: 200,
               scale: 3,
             ),
-            spring:
-                DistortionSpringConfig(damping: 10, mass: 0.5, stiffness: 100),
+            spring: DistortionSpringConfig(
+              damping: 10,
+              mass: 0.5,
+              stiffness: 100,
+            ),
             verticalDrag: VerticalDragConfigOverride(
               distortion: 0.1,
               distanceForMaxDistortion: 500,
