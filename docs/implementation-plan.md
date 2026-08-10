@@ -399,6 +399,11 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 
 ## Phase 5 — Golden Tests
 
+> **Phase 5 complete** (`9c23a43`): `dart_test.yaml` golden tag, `TestTag.golden`, 4 golden
+> baselines (rest/selected/pressed/badge). The pressed golden surfaced a real crash — the
+> `touchFeedbackOpacity` spring overshoots past 1.0, fixed by clamping `TouchFeedback`'s
+> `Opacity` to [0, 1].
+
 ### Task 5.1: Golden baseline
 
 **Files:**
