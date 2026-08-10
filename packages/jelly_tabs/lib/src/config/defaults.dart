@@ -40,6 +40,12 @@ abstract final class DefaultPillJelly {
       velocity: SpringConfig(stiffness: 300, dampingRatio: 0.5),
     ),
   );
+
+  static const config = PillJellyConfig(
+    pressedScale: pressedScale,
+    snapOnPointerDown: snapOnPointerDown,
+    frameConfig: frameConfig,
+  );
 }
 
 abstract final class DefaultDistortion {
@@ -60,5 +66,12 @@ abstract final class DefaultDistortion {
     distanceForMaxDistortion: 700,
     follow: 0.25,
     rubberBand: 0.14,
+  );
+
+  static const config = DistortionConfig(
+    pressedScale: pressedScale,
+    touchFeedback: touchFeedback,
+    spring: spring,
+    verticalDrag: verticalDrag,
   );
 }
