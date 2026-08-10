@@ -39,14 +39,14 @@ templates, Flutter test + goldens, GitHub Actions.
 - Create: `README.md` (root — repo overview)
 - Create: `reference/react-native-jelly-tabs/` (vendored snapshot @ `67f47f2`, read-only)
 
-- [ ] **Step 1: Write the failing check** — n/a (scaffold, no test yet; gate is `flutter analyze` clean).
-- [ ] **Step 2: Vendor the reference source** — check out `felipe-software/react-native-jelly-tabs`
+- [x] **Step 1: Write the failing check** — n/a (scaffold, no test yet; gate is `flutter analyze` clean).
+- [x] **Step 2: Vendor the reference source** — check out `felipe-software/react-native-jelly-tabs`
       at commit `67f47f2b5ef665eb7c6d9fd4a3427e346f25cbb8` and copy the analyzed files
       (`src/constants.ts`, `src/utils/animation.ts`, `src/utils/pill-jelly-animation.ts`,
       `src/hooks/use-pill-jelly.ts`, `src/hooks/use-distortion.ts`, `src/components/*.tsx`,
       `src/types.ts`) into `reference/react-native-jelly-tabs/`, plus its `LICENSE` (MIT). This is
       read-only ground truth for later sessions — never imported or built.
-- [ ] **Step 3: Create root files**
+- [x] **Step 3: Create root files**
 
 ```yaml
 # pubspec.yaml
@@ -58,10 +58,10 @@ workspace:
   - example
 ```
 
-- [ ] **Step 4: Add CI workflow** — matrix job: `flutter analyze`, `dart format --set-exit-if-changed`,
+- [x] **Step 4: Add CI workflow** — matrix job: `flutter analyze`, `dart format --set-exit-if-changed`,
       `flutter test`, coverage, then `flutter build` on android/ios/web inside `example/`.
       Follow the VGV `green-gate` gate order (analyze → format → test → coverage).
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add -A && git commit -m "feat: scaffold flutter_jelly_tabs workspace"
@@ -72,24 +72,24 @@ git add -A && git commit -m "feat: scaffold flutter_jelly_tabs workspace"
 **Files:**
 - Create: `packages/jelly_tabs/**` (from template)
 
-- [ ] **Step 1: Run the `create-project` skill** — scaffold with `very_good create
+- [x] **Step 1: Run the `create-project` skill** — scaffold with `very_good create
       flutter_package jelly_tabs` (VGV `ui-package` skill: scaffold from `app_ui_package`/
       `flutter_package` template, NOT bare `flutter create`).
-- [ ] **Step 2: Trim the template** — remove sample widget/tests; keep barrel, `pumpApp` helper,
+- [x] **Step 2: Trim the template** — remove sample widget/tests; keep barrel, `pumpApp` helper,
       analysis options, CI.
-- [ ] **Step 3: Set package metadata** — `name: jelly_tabs`, `version: 0.1.0`, description,
+- [x] **Step 3: Set package metadata** — `name: jelly_tabs`, `version: 0.1.0`, description,
       `sdk`/`flutter` environment, `very_good_analysis` dev dep.
-- [ ] **Step 4: Add example app reference** — `example/` app depends on
+- [x] **Step 4: Add example app reference** — `example/` app depends on
       `jelly_tabs: path: ../packages/jelly_tabs`; both listed under the root `pubspec.yaml`
       `workspace:` entry (native pub workspaces, see [ADR-0001](./adr/0001-native-pub-workspaces-over-melos.md)).
-- [ ] **Step 5: Commit** — `git add -A && git commit -m "feat: scaffold jelly_tabs package"`
+- [x] **Step 5: Commit** — `git add -A && git commit -m "feat: scaffold jelly_tabs package"`
 
 ### Task 0.3: Resolve workspace + verify baseline
 
-- [ ] **Step 1:** `dart pub get` at the workspace root (resolves all workspace packages together).
-- [ ] **Step 2: Run gates** — `flutter analyze`, `dart format --set-exit-if-changed`,
+- [x] **Step 1:** `dart pub get` at the workspace root (resolves all workspace packages together).
+- [x] **Step 2: Run gates** — `flutter analyze`, `dart format --set-exit-if-changed`,
       `flutter test` in `packages/jelly_tabs`. Expected: all clean (template baseline).
-- [ ] **Step 3: Commit any lockfile/format fixes** — `git commit -m "chore: workspace bootstrap"`
+- [x] **Step 3: Commit any lockfile/format fixes** — `git commit -m "chore: workspace bootstrap"`
 
 ## Phase 1 — Config & Models
 
@@ -99,7 +99,7 @@ git add -A && git commit -m "feat: scaffold flutter_jelly_tabs workspace"
 - Test: `packages/jelly_tabs/test/src/config/defaults_test.dart`
 - Create: `packages/jelly_tabs/lib/src/config/defaults.dart`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```dart
 import 'package:flutter_test/flutter_test.dart';
@@ -122,11 +122,11 @@ void main() {
 }
 ```
 
-- [ ] **Step 2: Run to verify it fails** — `flutter test`. Expected: FAIL (file/class missing).
-- [ ] **Step 3: Implement** — const classes `DefaultJellyTabsLayout`, `DefaultJellyTabsColors`,
+- [x] **Step 2: Run to verify it fails** — `flutter test`. Expected: FAIL (file/class missing).
+- [x] **Step 3: Implement** — const classes `DefaultJellyTabsLayout`, `DefaultJellyTabsColors`,
       `DefaultJellyTabsOpacity`, `DefaultPillJelly`, `DefaultDistortion` with all RN defaults.
-- [ ] **Step 4: Run to verify it passes** — `flutter test`. Expected: PASS.
-- [ ] **Step 5: Commit** — `git commit -am "feat: jelly tabs default config"`
+- [x] **Step 4: Run to verify it passes** — `flutter test`. Expected: PASS.
+- [x] **Step 5: Commit** — `git commit -am "feat: jelly tabs default config"`
 
 ### Task 1.2: Resolved config + deep-partial override
 
@@ -135,18 +135,18 @@ void main() {
 - Create: `packages/jelly_tabs/lib/src/config/config.dart`
 - Create: `packages/jelly_tabs/lib/src/config/spring_config.dart`
 
-- [ ] **Step 1: Write the failing test** — `resolveJellyTabsConfig()` returns all defaults;
+- [x] **Step 1: Write the failing test** — `resolveJellyTabsConfig()` returns all defaults;
       `resolveJellyTabsConfig(override: layout: {trackHeight: 80})` keeps siblings
       (iconSize 28, itemHeight 56); nested `pillJelly.frameConfig.springs.panel` override keeps
       other springs; `distortion.verticalDrag.follow` override keeps `distortion`.
       `SpringConfig` exposes `stiffness` + `dampingRatio`.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — immutable `SpringConfig`, `JellyTabsLayout/Colors/Opacity/
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — immutable `SpringConfig`, `JellyTabsLayout/Colors/Opacity/
       PillJellyFrameConfig/PillJellyConfig/DistortionConfig/JellyTabsConfig` + nullable
       `*Override` deep-partial forms + `resolveJellyTabsConfig([override])` merging
       nested-object-per-key exactly like RN `resolveTabBarConfig`.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: resolved jelly tabs config"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: resolved jelly tabs config"`
 
 ### Task 1.3: Models (port `types.ts`)
 
@@ -156,15 +156,15 @@ void main() {
 - Create: `packages/jelly_tabs/lib/src/models/jelly_tabs_change_event.dart`
 - Create: `packages/jelly_tabs/lib/src/models/jelly_tabs_icon_props.dart`
 
-- [ ] **Step 1: Write the failing test** — `JellyTabsItem` carries key/label/icons/a11y/badge/
+- [x] **Step 1: Write the failing test** — `JellyTabsItem` carries key/label/icons/a11y/badge/
       labelStyle/testID; `JellyTabsIconProps` carries color/colors/opacity/size;
       `JellyTabsChangeEvent` carries index+item.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `typedef JellyTabsIconBuilder = Widget Function(JellyTabsIconProps)`;
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `typedef JellyTabsIconBuilder = Widget Function(JellyTabsIconProps)`;
       `class JellyTabsItem` (fields per §5.2); `class JellyTabsChangeEvent`;
       `class JellyTabsIconProps`.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: jelly tabs item/event/icon models"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: jelly tabs item/event/icon models"`
 
 ## Phase 2 — Math Engine
 
@@ -174,7 +174,7 @@ void main() {
 - Test: `packages/jelly_tabs/test/src/math/animation_math_test.dart`
 - Create: `packages/jelly_tabs/lib/src/math/animation_math.dart`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```dart
 group('advanceSpring', () {
@@ -198,11 +198,11 @@ group('advanceSpring', () {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `advanceSpring` with the exact critical/under/over closed forms
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `advanceSpring` with the exact critical/under/over closed forms
       from `animation.ts` (naturalFrequency = sqrt(stiffness), rest epsilon 1e-4).
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: analytical spring solver"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: analytical spring solver"`
 
 ### Task 2.2: Easing, rubber band, geometry
 
@@ -210,16 +210,16 @@ group('advanceSpring', () {
 - Test: `packages/jelly_tabs/test/src/math/animation_math_test.dart` (extend)
 - Modify: `packages/jelly_tabs/lib/src/math/animation_math.dart`
 
-- [ ] **Step 1: Write the failing test** — `easeOut(0)==0`, `easeOut(1)==1`, monotonic,
+- [x] **Step 1: Write the failing test** — `easeOut(0)==0`, `easeOut(1)==1`, monotonic,
       `easeOut(0.5)` within [0.5, 1] (matches Compose `(0,0,0.58,1)`); `rubberBand(0)==0`,
       sign preserved, bounded by dimension; `getTabWidth(400, 4, 4) == 98`;
       `getTabWidth(0,4,4)==0`; `getMaxTabIndex(4)==3`, `getMaxTabIndex(0)==0`;
       `getHorizontalPanelOffset` returns 0 at rest and ±≤4 px elsewhere; `getPointerOrigin` clamps.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `easeOut` bisection, `rubberBand`, `getTabWidth`,
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `easeOut` bisection, `rubberBand`, `getTabWidth`,
       `getMaxTabIndex`, `getHorizontalPanelOffset`, `getPointerOrigin` — transcribed verbatim.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: easing, rubber band, tab geometry"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: easing, rubber band, tab geometry"`
 
 ### Task 2.3: Frame stepping state machine
 
@@ -227,7 +227,7 @@ group('advanceSpring', () {
 - Test: `packages/jelly_tabs/test/src/math/pill_jelly_animation_test.dart`
 - Create: `packages/jelly_tabs/lib/src/math/pill_jelly_animation.dart`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```dart
 // Fixed dt = 1/60. Build a fresh PillJellyFrameState.
@@ -241,12 +241,12 @@ test('rawPanelOffset springs back to 0 when not dragging', () { ... });
 test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `PillJellyFrameState` (mutable doubles),
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `PillJellyFrameState` (mutable doubles),
       `PillJellyFrameConfig`, `advancePillJellyFrame(state, config, tabCount, dtMs)` — exact
       step order from `pill-jelly-animation.ts`.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: pill jelly frame stepping"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: pill jelly frame stepping"`
 
 ## Phase 3 — Controllers
 
@@ -256,7 +256,7 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Test: `packages/jelly_tabs/test/src/controllers/distortion_controller_test.dart`
 - Create: `packages/jelly_tabs/lib/src/controllers/distortion_controller.dart`
 
-- [ ] **Step 1: Write the failing test** — with a fake `TickerProvider`: `begin` starts
+- [x] **Step 1: Write the failing test** — with a fake `TickerProvider`: `begin` starts
       `SpringSimulation`s animating `pressedScale → distortion.pressedScale` and
       `touchFeedbackOpacity → 1` (both `distortion.spring`); `update` with vertical translation
       sets `translateY = dragOriginY + rubberBand(v, trackHeight, verticalDrag.rubberBand) *
@@ -269,15 +269,15 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
       `pressedScale→1`, `touchFeedbackOpacity→0` from current value+velocity, and resets
       `transformOriginX` to `trackWidth/2` once the `scaleX` spring finishes; `setTrackWidth`
       centers `transformOriginX`.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — `DistortionController` per `architecture.md` §5.2: `begin`/`end`
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — `DistortionController` per `architecture.md` §5.2: `begin`/`end`
       drive `pressedScale`, `touchFeedbackOpacity`, `translateY`, `scaleX` via
       `AnimationController.animateWith(SpringSimulation(SpringDescription(mass, stiffness,
       damping), controller.value, target, controller.velocity))` (RN `distortion.spring`);
       `update` sets `translateY`/`scaleX`/`transformOriginX` as plain field assignments +
       `notifyListeners()`, matching RN's un-sprung `update()`.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: distortion controller"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: distortion controller"`
 
 ### Task 3.2: `PillJellyController` — state + ticker
 
@@ -285,15 +285,15 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Test: `packages/jelly_tabs/test/src/controllers/pill_jelly_controller_test.dart`
 - Create: `packages/jelly_tabs/lib/src/controllers/pill_jelly_controller.dart`
 
-- [ ] **Step 1: Write the failing test** — `setTrackWidth` → `getTabWidth` correct;
+- [x] **Step 1: Write the failing test** — `setTrackWidth` → `getTabWidth` correct;
       controlled index set → value animates toward it; `advancePillJellyFrame` invoked per tick
       (fake ticker); frame loop settles to inactive after 500ms idle.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — controller owning `PillJellyFrameState`, `Ticker`, 500ms-settle
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — controller owning `PillJellyFrameState`, `Ticker`, 500ms-settle
       logic; `ValueNotifier`s for `pillMaskStyle`, `panelStyle`, `pressedStyle`,
       `activeItemStyle`.
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: pill jelly controller (ticker)"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: pill jelly controller (ticker)"`
 
 ### Task 3.3: `PillJellyController` — gesture entry points
 
@@ -301,17 +301,17 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - Test: `packages/jelly_tabs/test/src/controllers/pill_jelly_controller_test.dart` (extend)
 - Modify: `packages/jelly_tabs/lib/src/controllers/pill_jelly_controller.dart`
 
-- [ ] **Step 1: Write the failing test** — `beginGesture` with `snapOnPointerDown=true` snaps
+- [x] **Step 1: Write the failing test** — `beginGesture` with `snapOnPointerDown=true` snaps
       target toward touched tab, isDragging=1, pressTarget=1, shapeTarget=pressedScale;
       `updateGesture` moves targetValue by `hTrans/tabWidth` and delegates to distortion;
       `finishGesture` (stationary, movedDistance<4) selects touched tab; `finishGesture`
       (dragged) settles to nearest index; `onTabPress` returning false restores prior selection
       and fires no `onTabChange`; accepted change fires `onTabChange`.
-- [ ] **Step 2: Run to verify it fails**
-- [ ] **Step 3: Implement** — port `beginGesture/updateGesture/finishGesture/confirmTabPress`
+- [x] **Step 2: Run to verify it fails**
+- [x] **Step 3: Implement** — port `beginGesture/updateGesture/finishGesture/confirmTabPress`
       logic from `use-pill-jelly.ts` (including `recording` X/Y swap).
-- [ ] **Step 4: Run to verify it passes**
-- [ ] **Step 5: Commit** — `git commit -am "feat: pill jelly gesture logic"`
+- [x] **Step 4: Run to verify it passes**
+- [x] **Step 5: Commit** — `git commit -am "feat: pill jelly gesture logic"`
 
 ## Phase 4 — Widgets
 

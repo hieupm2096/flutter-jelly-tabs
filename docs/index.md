@@ -27,7 +27,8 @@ Start with **design.md** (what we're building and why), then **architecture.md**
 
 - **D0 — Docs:** ✅ done (grilled and revised 2026-08-10 — see `log.md`)
 - **S1 — Scaffold:** ✅ done (2026-08-10). Very Good CLI >= 1.3.0 used for scaffolding.
-- **S2 — Core engine:** not started
+- **S2 — Core engine:** ✅ done (2026-08-10). Config, models, math engine, controllers all unit-tested.
+- **S3 — Widgets:** not started
 - **S3 — Widgets:** not started
 - **S4 — Example + parity:** not started
 - **S5 — Release hardening:** not started

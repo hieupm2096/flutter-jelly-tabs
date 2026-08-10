@@ -38,13 +38,13 @@ other; `S1`/`S2` are the immediate next milestones.
 - [x] `dart pub get` at workspace root; gates green (analyze/format/test baseline)
 - **Exit criteria:** clean repo, CI green, package + example scaffolding compiles.
 
-### ⏳ S2 — Core engine (follow-up session 2)
+### ✅ S2 — Core engine (DONE — 2026-08-10)
 
-- [ ] Config & defaults (design.md §5.4/§5.5) — `config.dart`, `defaults.dart`, `spring_config.dart`
-- [ ] Models — `JellyTabsItem`, `JellyTabsChangeEvent`, `JellyTabsIconProps`
-- [ ] Math engine — `animation_math.dart` (spring solver, easeOut, rubberBand, geometry),
+- [x] Config & defaults (design.md §5.4/§5.5) — `config.dart`, `defaults.dart`, `spring_config.dart`
+- [x] Models — `JellyTabsItem`, `JellyTabsChangeEvent`, `JellyTabsIconProps`
+- [x] Math engine — `animation_math.dart` (spring solver, easeOut, rubberBand, geometry),
       `pill_jelly_animation.dart` (frame stepping)
-- [ ] Controllers — `DistortionController`, `PillJellyController` (ticker + gestures)
+- [x] Controllers — `DistortionController`, `PillJellyController` (ticker + gestures)
 - **Exit criteria:** pure-Dart engine fully unit-tested; no UI yet.
 
 ### ⏳ S3 — Widgets (follow-up session 3)
