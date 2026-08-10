@@ -1,0 +1,7 @@
+name: flutter_jelly_tabs
+publish_to: none
+environment:
+  sdk: ^3.10.0
+workspace:
+  - packages/jelly_tabs
+  - example
