@@ -449,10 +449,10 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 
 ### Task 7.1: Package docs
 
-- [ ] **Step 1:** Write `packages/jelly_tabs/README.md` (usage, install, all props table — the
+- [x] **Step 1:** Write `packages/jelly_tabs/README.md` (usage, install, all props table — the
       Flutter equivalent of RN's `CUSTOMIZATION.md`).
-- [ ] **Step 2:** Ensure dartdoc on every public member (`dart doc` clean).
-- [ ] **Step 3: Commit** — `git commit -am "docs: package readme + dartdoc"`
+- [x] **Step 2:** Ensure dartdoc on every public member (`dart doc` clean).
+- [x] **Step 3: Commit** — `git commit -am "docs: package readme + dartdoc"`
 
 ### Task 7.2: VGV green-gate + review pass
 
