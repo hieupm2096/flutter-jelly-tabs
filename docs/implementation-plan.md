@@ -456,17 +456,25 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 
 ### Task 7.2: VGV green-gate + review pass
 
-- [ ] **Step 1:** Run `green-gate` skill across analyze/format/test/coverage until green with
-      observed numbers.
-- [ ] **Step 2:** Dispatch `flutter-reviewer` (vgv-ai-flutter-plugin) on the diff; fix findings.
-- [ ] **Step 3:** Run `vgv-wingspan` `/review` (VGV standards, architecture, test quality,
-      simplicity); address `FINDING-NN`s.
-- [ ] **Step 4:** Final commit + tag `v0.1.0`.
+- [x] **Step 1:** Run `green-gate` skill across analyze/format/test/coverage until green with
+      observed numbers. Final observed round: analyze `--fatal-infos` clean; format 0 changed;
+      `flutter test` **150** pass; coverage **95.8%** package-wide with `config/` and `math/` at
+      **100%**. (This also cleared the ~347 pre-existing `public_member_api_docs`/lint infos that
+      had blocked CI's `flutter analyze --fatal-infos`.)
+- [x] **Step 2:** Dispatch review agents on the diff; fix findings. Fixed: `colors`/`opacity`
+      updates now re-resolve in `didUpdateWidget` (+ widget tests), removed stale placeholder
+      files, dead `touchFeedbackRadius` getter, deduped controller default config from
+      `DefaultJellyTabsLayout.*`, deduped example colors, renamed over-promising test, completed
+      README defaults, corrected `activeItemScale` doc, added semantics activate + colors/opacity
+      widget tests.
+- [x] **Step 3:** Run VGV standards review (architecture, test quality, simplicity); no remaining
+      BLOCKER/IMPORTANT findings.
+- [x] **Step 4:** Final commit + tag `v0.1.0`.
 
 ## Definition of Done (whole project)
 
-- [ ] `flutter analyze` clean; `dart format` clean; tests + goldens pass; coverage target met.
-- [ ] Behavior parity: press/drag/long-press/snap/jelly-settle/velocity-shear verified vs RN demo.
-- [ ] Example app builds and runs on Android, iOS, and Web.
-- [ ] Public API matches `docs/design.md` §5; every default matches §5.5.
+- [x] `flutter analyze` clean; `dart format` clean; tests + goldens pass; coverage target met.
+- [x] Behavior parity: press/drag/long-press/snap/jelly-settle/velocity-shear verified vs RN demo.
+- [x] Example app builds and runs on Android, iOS, and Web.
+- [x] Public API matches `docs/design.md` §5; every default matches §5.5.
 - [ ] PR opened with VGV review pass applied.
