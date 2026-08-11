@@ -162,6 +162,16 @@ touchFeedback {middleOpacityRatio 0.43, opacity 0.15, radius 150, scale 2},
 spring {damping 18, mass 0.9, stiffness 240}, verticalDrag {distortion 0.08,
 distanceForMaxDistortion 700, follow 0.25, rubberBand 0.14}}`.
 
+## Accessibility ♿
+
+Each tab exposes a single `Semantics` node (`role: tab`, `selected`, label,
+`focusable`/`focused`) — screen readers announce the label, position, and
+selection state, and a semantics tap action selects the tab. On desktop/web the
+bar is fully keyboard-operable: Tab/arrow keys move focus between tabs in item
+order, and Enter/Space selects the focused tab through the same
+`activateTab(index)` path as a tap. A theme-derived focus ring
+(`Theme.of(context).focusColor`) shows the focused tab.
+
 ## Testing 🧪
 
 ```sh

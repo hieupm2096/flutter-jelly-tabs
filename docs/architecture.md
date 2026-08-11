@@ -264,11 +264,14 @@ Defaults are copied verbatim from RN (see `docs/design.md` §5.5).
   (`ExcludeSemantics`) so screen readers hit exactly one tab node per item, like RN's
   `accessibilityTabsRow`.
 - **Keyboard/focus (web/desktop, no RN equivalent).** Each tab is wrapped in a `Focus` node
-  (traversal order = item order); `Enter`/`Space` while focused calls the same `activateTab(index)`
-  path as a tap, via `Actions`/`CallbackAction` on `ActivateIntent`. Focus ring uses the default
-  Flutter focus highlight (no custom styling required for v0.1.0). This has no RN source to port
-  from — RN targets touch only — so it's new surface area, not a port, and is tested separately
-  from behavior-parity tests.
+  (traversal order = item order via `FocusTraversalGroup` + `OrderedTraversalPolicy`); arrow keys
+  move focus between tabs, and `Enter`/`Space` while focused calls the same `activateTab(index)`
+  path as a tap, via `Shortcuts` + `Actions`/`CallbackAction` on `ActivateIntent`. The semantics
+  row stays pointer-transparent (`IgnorePointer`), so physical taps still reach the `Listener` —
+  focus is keyboard-only. Focus ring uses the theme's `focusColor`; the per-tab `Semantics` node
+  carries `focusable`/`focused` so screen readers see exactly one tab node per item. This has no
+  RN source to port from — RN targets touch only — so it's new surface area, not a port, and is
+  tested separately from behavior-parity tests (`test/src/widgets/keyboard_focus_test.dart`).
 
 ## 9. Testing Strategy
 

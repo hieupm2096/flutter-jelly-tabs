@@ -73,6 +73,10 @@ other; `S1`/`S2` are the immediate next milestones.
 
 ### 🔭 Post-MVP (deferred ideas — explicitly out of current scope)
 
+- [x] Keyboard / focus support (web/desktop, no RN equivalent) — `FocusTraversalGroup` +
+      `OrderedTraversalPolicy`, per-tab `Focus`, `Shortcuts`/`Actions` for arrow keys and
+      Enter/Space → `activateTab`, theme `focusColor` ring, `focusable`/`focused` semantics.
+      Implemented TDD (`keyboard_focus_test.dart`, 10 tests) in a post-MVP session.
 - [ ] `JellyTabBar` GoRouter / `StatefulShellRoute.indexedStack` adapter (reactivation of RN's
       navigation-integrated component) — headless-only was confirmed, so this is a future option.
 - [ ] Router-agnostic shell helper (auto_route / custom navigator).

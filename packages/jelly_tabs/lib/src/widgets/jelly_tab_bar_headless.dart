@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter/services.dart';
 import 'package:jelly_tabs/src/config/config.dart';
 import 'package:jelly_tabs/src/config/defaults.dart';
 import 'package:jelly_tabs/src/controllers/pill_jelly_controller.dart';
@@ -331,7 +332,10 @@ class _JellyTabBarHeadlessState extends State<JellyTabBarHeadless>
                 ),
               ),
             ),
-            _buildSemanticsRow(trackInset: trackInset),
+            _buildSemanticsRow(
+              trackInset: trackInset,
+              trackHeight: trackHeight,
+            ),
           ],
         ),
       ),
@@ -346,30 +350,52 @@ class _JellyTabBarHeadlessState extends State<JellyTabBarHeadless>
     );
   }
 
-  Widget _buildSemanticsRow({required double trackInset}) {
+  Widget _buildSemanticsRow({
+    required double trackInset,
+    required double trackHeight,
+  }) {
     final selectedIndex = _controller.selectedIndex;
     return Positioned.fill(
       child: IgnorePointer(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: trackInset),
-          child: Row(
-            children: [
-              for (var index = 0; index < widget.items.length; index++)
-                Expanded(
-                  child: Semantics(
-                    role: SemanticsRole.tab,
-                    label:
-                        widget.items[index].accessibilityLabel ??
-                        widget.items[index].label,
-                    selected: index == selectedIndex,
-                    onTap: () => _controller.activateTab(index),
-                    onLongPress: widget.onTabLongPress == null
-                        ? null
-                        : () => _handleTabLongPress(index),
-                    child: const SizedBox.expand(),
-                  ),
-                ),
-            ],
+        child: Shortcuts(
+          shortcuts: const {
+            SingleActivator(
+              LogicalKeyboardKey.arrowLeft,
+            ): DirectionalFocusIntent(
+              TraversalDirection.left,
+            ),
+            SingleActivator(
+              LogicalKeyboardKey.arrowRight,
+            ): DirectionalFocusIntent(
+              TraversalDirection.right,
+            ),
+            SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+            SingleActivator(LogicalKeyboardKey.numpadEnter): ActivateIntent(),
+            SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+          },
+          child: FocusTraversalGroup(
+            policy: OrderedTraversalPolicy(),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: trackInset),
+              child: Row(
+                children: [
+                  for (var index = 0; index < widget.items.length; index++)
+                    Expanded(
+                      child: _FocusableTab(
+                        focusRadius: trackHeight / 2,
+                        label:
+                            widget.items[index].accessibilityLabel ??
+                            widget.items[index].label,
+                        selected: index == selectedIndex,
+                        onActivate: () => _controller.activateTab(index),
+                        onLongPress: widget.onTabLongPress == null
+                            ? null
+                            : () => _handleTabLongPress(index),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -567,6 +593,105 @@ class _JellyTabBarHeadlessState extends State<JellyTabBarHeadless>
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Wraps a single tab in keyboard focus support: a [Focus] node (traversal
+/// order = item order), an [ActivateIntent] handler so Enter/Space select the
+/// tab, and a theme-derived focus ring. Owns the tab's [Semantics] node so the
+/// semantics tree exposes exactly one node per tab.
+class _FocusableTab extends StatefulWidget {
+  /// Creates a [_FocusableTab].
+  const _FocusableTab({
+    required this.label,
+    required this.selected,
+    required this.onActivate,
+    required this.focusRadius,
+    this.onLongPress,
+  });
+
+  /// The accessible label for the tab.
+  final String label;
+
+  /// Whether the tab is currently selected.
+  final bool selected;
+
+  /// Invoked when the tab is activated (tap or Enter/Space).
+  final VoidCallback onActivate;
+
+  /// Invoked on a long press, when configured.
+  final VoidCallback? onLongPress;
+
+  /// Corner radius of the focus ring.
+  final double focusRadius;
+
+  @override
+  State<_FocusableTab> createState() => _FocusableTabState();
+}
+
+class _FocusableTabState extends State<_FocusableTab> {
+  late final FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final focusColor = Theme.of(context).focusColor;
+    return Actions(
+      actions: {
+        ActivateIntent: CallbackAction<ActivateIntent>(
+          onInvoke: (_) {
+            widget.onActivate();
+            return null;
+          },
+        ),
+        ButtonActivateIntent: CallbackAction<ButtonActivateIntent>(
+          onInvoke: (_) {
+            widget.onActivate();
+            return null;
+          },
+        ),
+      },
+      child: Focus(
+        focusNode: _focusNode,
+        includeSemantics: false,
+        child: AnimatedBuilder(
+          animation: _focusNode,
+          builder: (context, child) {
+            final focused = _focusNode.hasFocus;
+            return DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(widget.focusRadius),
+                border: focused
+                    ? Border.all(color: focusColor, width: 2)
+                    : null,
+              ),
+              child: Semantics(
+                role: SemanticsRole.tab,
+                label: widget.label,
+                selected: widget.selected,
+                focusable: true,
+                focused: focused,
+                onTap: widget.onActivate,
+                onLongPress: widget.onLongPress,
+                child: child,
+              ),
+            );
+          },
+          child: const SizedBox.expand(),
         ),
       ),
     );
