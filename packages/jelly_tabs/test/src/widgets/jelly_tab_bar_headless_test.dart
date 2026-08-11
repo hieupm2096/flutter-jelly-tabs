@@ -123,6 +123,72 @@ void main() {
       expect(find.text('5'), findsNWidgets(2));
     });
 
+    testWidgets('applies colors overrides', (tester) async {
+      await pumpBar(
+        tester,
+        const JellyTabBarHeadless(
+          items: _items,
+          colors: JellyTabsColorsOverride(
+            surface: Color(0xFF123456),
+            selectedSurface: Color(0xFF654321),
+          ),
+        ),
+      );
+
+      final surface = find.byWidgetPredicate(
+        (widget) =>
+            widget is ColoredBox && widget.color == const Color(0xFF123456),
+      );
+      expect(surface, findsOneWidget);
+      final selectedSurface = find.byWidgetPredicate(
+        (widget) =>
+            widget is ColoredBox && widget.color == const Color(0xFF654321),
+      );
+      expect(selectedSurface, findsOneWidget);
+    });
+
+    testWidgets('applies opacity overrides', (tester) async {
+      await pumpBar(
+        tester,
+        const JellyTabBarHeadless(
+          items: _items,
+          opacity: JellyTabsOpacityOverride(surface: 0.5),
+        ),
+      );
+
+      final surface = find.byWidgetPredicate(
+        (widget) =>
+            widget is ColoredBox &&
+            widget.color == const Color(0xFF22211F).withValues(alpha: 0.5),
+      );
+      expect(surface, findsOneWidget);
+    });
+
+    testWidgets('re-resolves colors when they change after build', (
+      tester,
+    ) async {
+      await tester.pumpAppWidget(
+        const JellyTabBarHeadless(
+          items: _items,
+          colors: JellyTabsColorsOverride(surface: Color(0xFF111111)),
+        ),
+      );
+      await tester.pump();
+      await tester.pumpAppWidget(
+        const JellyTabBarHeadless(
+          items: _items,
+          colors: JellyTabsColorsOverride(surface: Color(0xFF222222)),
+        ),
+      );
+      await tester.pump();
+
+      final surface = find.byWidgetPredicate(
+        (widget) =>
+            widget is ColoredBox && widget.color == const Color(0xFF222222),
+      );
+      expect(surface, findsOneWidget);
+    });
+
     testWidgets('caps the bar at maxWidth and centers it', (tester) async {
       await pumpBar(tester, const JellyTabBarHeadless(items: _items));
 
@@ -292,6 +358,25 @@ void main() {
           find.bySemanticsLabel('Home'),
         );
         expect(homeTab.properties.onLongPress, isNotNull);
+        handle.dispose();
+      });
+
+      testWidgets('activate action selects the tab', (tester) async {
+        final handle = tester.ensureSemantics();
+        final changeEvents = <JellyTabsChangeEvent>[];
+        await pumpBar(
+          tester,
+          JellyTabBarHeadless(items: _items, onTabChange: changeEvents.add),
+        );
+
+        final searchTab = tester.widget<Semantics>(
+          find.bySemanticsLabel('Search'),
+        );
+        searchTab.properties.onTap!.call();
+        await settle(tester);
+
+        expect(changeEvents, hasLength(1));
+        expect(changeEvents.single.index, 1);
         handle.dispose();
       });
     });

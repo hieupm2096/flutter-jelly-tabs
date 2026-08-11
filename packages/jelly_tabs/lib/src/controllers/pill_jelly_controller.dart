@@ -26,12 +26,12 @@ class PillJellyController extends ChangeNotifier {
     required TickerProvider vsync,
     JellyTabsConfig config = const JellyTabsConfig(
       layout: JellyTabsLayout(
-        iconSize: 28,
-        itemHeight: 56,
-        maskOverscanX: 48,
-        maskOverscanY: 16,
-        trackHeight: 64,
-        trackInset: 4,
+        iconSize: DefaultJellyTabsLayout.iconSize,
+        itemHeight: DefaultJellyTabsLayout.itemHeight,
+        maskOverscanX: DefaultJellyTabsLayout.maskOverscanX,
+        maskOverscanY: DefaultJellyTabsLayout.maskOverscanY,
+        trackHeight: DefaultJellyTabsLayout.trackHeight,
+        trackInset: DefaultJellyTabsLayout.trackInset,
       ),
       pillJelly: DefaultPillJelly.config,
       distortion: DefaultDistortion.config,
@@ -111,7 +111,7 @@ class PillJellyController extends ChangeNotifier {
     _geometryScale,
   );
 
-  /// The selected tab content's press-inflation scale.
+  /// The active-content press-inflation scale applied to the pill row.
   double get activeItemScale => 1 + 0.2 * _frameState.pressProgress;
 
   /// The raw frame state, exposed for tests.

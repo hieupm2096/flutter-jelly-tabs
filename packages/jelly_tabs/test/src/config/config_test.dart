@@ -11,7 +11,7 @@ import 'package:jelly_tabs/src/config/spring_config.dart';
 
 void main() {
   group(JellyTabsLayout, () {
-    test('holds all layout fields', () {
+    test('stores iconSize and itemHeight', () {
       const layout = JellyTabsLayout(
         iconSize: 28,
         itemHeight: 56,

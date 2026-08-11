@@ -55,7 +55,7 @@ const _items = [
   ),
 ];
 
-const _resolvedColors = JellyTabsColors(
+const _amberColors = JellyTabsColors(
   activeContent: Color(0xFF451A03),
   inactiveContent: Color(0xFFA8A29E),
   selectedSurface: Color(0xFFF59E0B),
@@ -122,13 +122,13 @@ class _HomePageState extends State<HomePage> {
               ),
               child: JellyTabBarHeadless(
                 items: _items,
-                colors: const JellyTabsColorsOverride(
-                  activeContent: Color(0xFF451A03),
-                  inactiveContent: Color(0xFFA8A29E),
-                  selectedSurface: Color(0xFFF59E0B),
-                  surface: Color(0xFF1C1917),
+                colors: JellyTabsColorsOverride(
+                  activeContent: _amberColors.activeContent,
+                  inactiveContent: _amberColors.inactiveContent,
+                  selectedSurface: _amberColors.selectedSurface,
+                  surface: _amberColors.surface,
                 ),
-                touchFeedbackColor: const Color(0xFFF59E0B),
+                touchFeedbackColor: _amberColors.selectedSurface,
                 onTabChange: (event) {
                   setState(() => _selectedIndex = event.index);
                 },
@@ -144,8 +144,8 @@ class _HomePageState extends State<HomePage> {
     final item = _items[_selectedIndex];
     final icon = item.activeIcon(
       JellyTabsIconProps(
-        color: _resolvedColors.selectedSurface,
-        colors: _resolvedColors,
+        color: _amberColors.selectedSurface,
+        colors: _amberColors,
         opacity: 1,
         size: 56,
       ),

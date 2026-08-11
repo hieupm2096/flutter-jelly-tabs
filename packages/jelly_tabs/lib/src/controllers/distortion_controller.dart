@@ -81,9 +81,6 @@ class DistortionController extends ChangeNotifier {
   /// The track height in pixels, scaled by `displayScale`.
   double get trackHeight => _layout.trackHeight * _geometryScale;
 
-  /// The radial glow radius, unscaled by `displayScale`.
-  double get touchFeedbackRadius => _config.touchFeedback.radius;
-
   /// The vertical drag distance at which distortion saturates.
   double get distanceForMaxDistortion =>
       _config.verticalDrag.distanceForMaxDistortion * _geometryScale;

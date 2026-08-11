@@ -150,12 +150,17 @@ JellyTabBarHeadless(
 ```
 
 `resolveJellyTabsConfig([override])` returns the fully-resolved
-`JellyTabsConfig`. Defaults (verbatim from the RN source): `iconSize 28`,
-`itemHeight 56`, `trackHeight 64`, `trackInset 4`, `maskOverscanX 48`,
-`maskOverscanY 16`, `colors {#11100F, #B8B4AD, #F2EEE7, #22211F}`,
-`pillJelly.pressedScale 1.3`, and `distortion {pressedScale 1.025,
-touchFeedback {opacity 0.15, radius 150, scale 2}, spring {damping 18,
-stiffness 240}, verticalDrag {distortion 0.08, follow 0.25, rubberBand 0.14}}`.
+`JellyTabsConfig`. Defaults (verbatim from the RN source — see
+`docs/design.md` §5.5 for the full table): `iconSize 28`, `itemHeight 56`,
+`trackHeight 64`, `trackInset 4`, `maskOverscanX 48`, `maskOverscanY 16`,
+`colors {activeContent #11100F, inactiveContent #B8B4AD, selectedSurface
+#F2EEE7, surface #22211F}`, `opacity {all 1}`, `pillJelly {pressedScale 1.3,
+snapOnPointerDown true, frameConfig.releaseDistanceFraction 0.025, springs
+panel {300,1}, press {1000,1}, scaleX {250,0.6}, scaleY {250,0.7}, value
+{1000,1}, velocity {300,0.5}}`, and `distortion {pressedScale 1.025,
+touchFeedback {middleOpacityRatio 0.43, opacity 0.15, radius 150, scale 2},
+spring {damping 18, mass 0.9, stiffness 240}, verticalDrag {distortion 0.08,
+distanceForMaxDistortion 700, follow 0.25, rubberBand 0.14}}`.
 
 ## Testing 🧪
 

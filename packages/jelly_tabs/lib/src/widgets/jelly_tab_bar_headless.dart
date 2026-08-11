@@ -134,6 +134,22 @@ class _JellyTabBarHeadlessState extends State<JellyTabBarHeadless>
       _controller.dispose();
       _resolveDerived();
       _controller = _createController();
+    } else {
+      final colorsChanged =
+          oldWidget.colors?.activeContent != widget.colors?.activeContent ||
+          oldWidget.colors?.inactiveContent != widget.colors?.inactiveContent ||
+          oldWidget.colors?.selectedSurface != widget.colors?.selectedSurface ||
+          oldWidget.colors?.surface != widget.colors?.surface;
+      final opacityChanged =
+          oldWidget.opacity?.activeContent != widget.opacity?.activeContent ||
+          oldWidget.opacity?.inactiveContent !=
+              widget.opacity?.inactiveContent ||
+          oldWidget.opacity?.selectedSurface !=
+              widget.opacity?.selectedSurface ||
+          oldWidget.opacity?.surface != widget.opacity?.surface;
+      if (colorsChanged || opacityChanged) {
+        _resolveDerived();
+      }
     }
   }
 
