@@ -25,6 +25,11 @@ Future<void> tapTab(WidgetTester tester, int index) async {
   await tester.pump();
 }
 
+Future<void> expandPanel(WidgetTester tester, String title) async {
+  await tester.tap(find.text(title));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   group(HomePage, () {
     testWidgets('renders the jelly tab bar with configured items', (
@@ -33,48 +38,75 @@ void main() {
       await pumpHome(tester);
 
       expect(find.byType(JellyTabBarHeadless), findsOneWidget);
-      expect(find.byIcon(Icons.home_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.photo_camera_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.settings_outlined), findsOneWidget);
-      expect(find.byIcon(Icons.format_paint_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.home), findsWidgets);
+      expect(find.byIcon(Icons.photo_camera), findsWidgets);
+      expect(find.byIcon(Icons.settings), findsWidgets);
+      expect(find.byIcon(Icons.format_paint), findsWidgets);
     });
 
-    testWidgets('renders the badge on the camera tab', (tester) async {
+    testWidgets('renders the customizer header', (tester) async {
       await pumpHome(tester);
 
-      expect(find.text('3'), findsNWidgets(2));
+      expect(find.text('react-native-jelly-tabs'), findsOneWidget);
+      expect(find.text('Change bg'), findsOneWidget);
+      expect(find.text('GitHub'), findsOneWidget);
+      expect(find.text('Reset'), findsOneWidget);
     });
 
-    testWidgets('shows the home body by default', (tester) async {
-      await pumpHome(tester);
-
-      expect(find.text('Home feed'), findsOneWidget);
-    });
-
-    testWidgets('switches the body when a tab is tapped', (tester) async {
-      await pumpHome(tester);
-
-      await tapTab(tester, 1);
-
-      expect(find.text('Camera roll'), findsOneWidget);
-    });
-
-    testWidgets('switches the body back to the first tab', (tester) async {
+    testWidgets('switches selection when a tab is tapped', (tester) async {
+      final handle = tester.ensureSemantics();
       await pumpHome(tester);
 
       await tapTab(tester, 1);
-      await tapTab(tester, 0);
+      await tester.pump(const Duration(milliseconds: 600));
+      await tester.pump();
 
-      expect(find.text('Home feed'), findsOneWidget);
+      final cameraTab = tester.widget<Semantics>(
+        find.bySemanticsLabel('Camera'),
+      );
+      expect(cameraTab.properties.selected, isTrue);
+      final homeTab = tester.widget<Semantics>(
+        find.bySemanticsLabel('Home'),
+      );
+      expect(homeTab.properties.selected, isFalse);
+      handle.dispose();
     });
 
-    testWidgets('opens the customization showcase', (tester) async {
+    testWidgets('applies a palette to the tab bar', (tester) async {
       await pumpHome(tester);
+      await expandPanel(tester, 'Palette');
 
-      await tester.tap(find.byIcon(Icons.tune));
+      await tester.tap(find.byKey(const Key('palette-Blue')));
       await tester.pumpAndSettle();
 
-      expect(find.byType(CustomizationPage), findsOneWidget);
+      final bar = tester.widget<JellyTabBarHeadless>(
+        find.byType(JellyTabBarHeadless),
+      );
+      expect(bar.colors?.selectedSurface, const Color(0xFF2563EB));
+      expect(bar.colors?.surface, const Color(0xFF18181B));
+    });
+
+    testWidgets('reset restores the default amber look', (tester) async {
+      await pumpHome(tester);
+      await expandPanel(tester, 'Palette');
+      await tester.tap(find.byKey(const Key('palette-Blue')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Reset'));
+      await tester.pumpAndSettle();
+
+      final bar = tester.widget<JellyTabBarHeadless>(
+        find.byType(JellyTabBarHeadless),
+      );
+      expect(bar.colors?.selectedSurface, const Color(0xFFF59E0B));
+      expect(bar.colors?.surface, const Color(0xFF1C1917));
+    });
+
+    testWidgets('shuffles the background when requested', (tester) async {
+      await pumpHome(tester);
+
+      await tester.tap(find.text('Change bg'));
+      await tester.pump();
     });
   });
 }

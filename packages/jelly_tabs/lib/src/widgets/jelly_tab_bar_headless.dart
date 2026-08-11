@@ -306,6 +306,7 @@ class _JellyTabBarHeadlessState extends State<JellyTabBarHeadless>
                 offset: Offset(_controller.panelOffset, 0),
                 child: Stack(
                   fit: StackFit.expand,
+                  clipBehavior: Clip.none,
                   children: [
                     _buildSurface(trackHeight),
                     if (widget.touchFeedbackEnabled)
