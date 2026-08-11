@@ -20,7 +20,7 @@ void main() {
       subject = DistortionController(
         config: DefaultDistortion.config,
         layout: _layout,
-        vsync: TestVSync(),
+        vsync: const TestVSync(),
       );
     });
 
@@ -59,11 +59,12 @@ void main() {
       testWidgets('captures in-flight translateY into dragOriginY mid-flight', (
         tester,
       ) async {
-        subject.setTrackWidth(400);
-        subject.begin(50, 30, 50);
-        subject.update(50, 50);
-        // Simulate a release spring still settling.
-        subject.end();
+        subject
+          ..setTrackWidth(400)
+          ..begin(50, 30, 50)
+          ..update(50, 50)
+          // Simulate a release spring still settling.
+          ..end();
         await tester.pump(const Duration(milliseconds: 16));
         await tester.pump(const Duration(milliseconds: 100));
         final inFlightTranslateY = subject.translateY;
@@ -80,14 +81,15 @@ void main() {
       testWidgets(
         'sets translateY and scaleX as direct assignments (same-tick)',
         (tester) async {
-          subject.setTrackWidth(400);
-          subject.begin(50, 30, 50);
-          subject.update(140, 50);
+          subject
+            ..setTrackWidth(400)
+            ..begin(50, 30, 50)
+            ..update(140, 50);
 
-          final expectedTranslateY =
+          const expectedTranslateY =
               0 + 0.25 * ((1 - 1 / ((140 * 0.14) / 64 + 1)) * 64);
           // progress = min(140 / 700, 1) = 0.2
-          final expectedScaleX = 1 - 0.2 * 0.08;
+          const expectedScaleX = 1 - 0.2 * 0.08;
 
           expect(subject.translateY, closeTo(expectedTranslateY, 1e-6));
           expect(subject.scaleX, closeTo(expectedScaleX, 1e-6));
@@ -99,9 +101,10 @@ void main() {
       testWidgets('keeps scaleX at 1 for horizontal-only input', (
         tester,
       ) async {
-        subject.setTrackWidth(400);
-        subject.begin(50, 30, 50);
-        subject.update(0, 50);
+        subject
+          ..setTrackWidth(400)
+          ..begin(50, 30, 50)
+          ..update(0, 50);
 
         expect(subject.scaleX, 1);
         await tester.pump(const Duration(milliseconds: 16));
@@ -111,11 +114,11 @@ void main() {
 
     group('end', () {
       testWidgets('springs values back to rest', (tester) async {
-        subject.setTrackWidth(400);
-        subject.begin(50, 30, 50);
-        subject.update(140, 50);
-
-        subject.end();
+        subject
+          ..setTrackWidth(400)
+          ..begin(50, 30, 50)
+          ..update(140, 50)
+          ..end();
         await tester.pump(const Duration(milliseconds: 16));
         await tester.pump(const Duration(seconds: 2));
 
@@ -128,12 +131,12 @@ void main() {
       testWidgets(
         'resets transformOriginX to trackWidth/2 when scaleX finishes',
         (tester) async {
-          subject.setTrackWidth(400);
-          subject.begin(50, 30, 50);
-          subject.update(140, 50);
-          subject.transformOriginX = 123;
-
-          subject.end();
+          subject
+            ..setTrackWidth(400)
+            ..begin(50, 30, 50)
+            ..update(140, 50)
+            ..transformOriginX = 123
+            ..end();
           await tester.pump(const Duration(milliseconds: 16));
           await tester.pump(const Duration(seconds: 2));
 

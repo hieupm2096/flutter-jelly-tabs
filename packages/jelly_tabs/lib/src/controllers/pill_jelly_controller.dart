@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/animation.dart';
@@ -11,7 +12,15 @@ import 'package:jelly_tabs/src/math/pill_jelly_animation.dart';
 import 'package:jelly_tabs/src/models/jelly_tabs_change_event.dart';
 import 'package:jelly_tabs/src/models/jelly_tabs_item.dart';
 
+/// Owns the jelly pill's frame loop and gesture state machine, ported from
+/// `use-pill-jelly.ts`.
+///
+/// A [Ticker] steps [PillJellyFrameState] via [advancePillJellyFrame] on every
+/// frame while the pill is animating, and stops after a 500ms idle settle. The
+/// controller also forwards vertical drag/scale work to [DistortionController]
+/// and resolves accepted tab presses into `onTabPress`/`onTabChange` callbacks.
 class PillJellyController extends ChangeNotifier {
+  /// Creates a [PillJellyController].
   PillJellyController({
     required List<JellyTabsItem> items,
     required TickerProvider vsync,
@@ -29,14 +38,11 @@ class PillJellyController extends ChangeNotifier {
     ),
     int? selectedIndex,
     double displayScale = 1,
-    bool recording = false,
-    bool? Function(JellyTabsChangeEvent event)? onTabPress,
-    void Function(JellyTabsChangeEvent event)? onTabChange,
+    this._recording = false,
+    this._onTabPress,
+    this._onTabChange,
   }) : _config = config,
        _items = items,
-       _recording = recording,
-       _onTabPress = onTabPress,
-       _onTabChange = onTabChange,
        _geometryScale = displayScale > 0 ? displayScale : 1 {
     final initialIndex = _getControlledSelectedIndex(
       selectedIndex,
@@ -69,6 +75,8 @@ class PillJellyController extends ChangeNotifier {
   late final Ticker _ticker;
 
   int _selectedIndex = 0;
+
+  /// The currently selected tab index, or -1 when nothing is selected.
   int get selectedIndex => _selectedIndex;
 
   // Gesture state
@@ -81,34 +89,59 @@ class PillJellyController extends ChangeNotifier {
   Duration? _idleDeadline;
   Duration? _lastElapsed;
 
+  /// The measured track width in pixels.
   double get trackWidth => _distortion.trackWidth;
   double get _trackInset => _config.layout.trackInset * _geometryScale;
   double get _tabWidth => getTabWidth(trackWidth, _trackInset, _items.length);
 
   // Widget-facing style accessors
+  /// The pill's horizontal translation in the overscan layer.
   Offset get pillMaskTranslation => Offset(_frameState.value * _tabWidth, 0);
+
+  /// The pill's velocity-shear corrected horizontal scale.
   double get pillMaskScaleX => _getPillMaskScaleX();
+
+  /// The pill's velocity-shear corrected vertical scale.
   double get pillMaskScaleY => _getPillMaskScaleY();
+
+  /// The panel's horizontal micro-shift while dragging.
   double get panelOffset => getHorizontalPanelOffset(
     _frameState.rawPanelOffset,
     trackWidth,
     _geometryScale,
   );
+
+  /// The selected tab content's press-inflation scale.
   double get activeItemScale => 1 + 0.2 * _frameState.pressProgress;
 
+  /// The raw frame state, exposed for tests.
   @visibleForTesting
   PillJellyFrameState get frameState => _frameState;
 
+  /// Whether the pill frame ticker is currently running.
   @visibleForTesting
   bool get isFrameLoopActive => _ticker.isActive;
 
   // Distortion passthroughs
+  /// The distortion controller backing the vertical/scale animations.
   DistortionController get distortion => _distortion;
+
+  /// The track's current vertical translation.
   double get translateY => _distortion.translateY;
+
+  /// The track's current horizontal scale factor.
   double get distortionScaleX => _distortion.scaleX;
+
+  /// The whole track's press-inflation scale.
   double get pressedScale => _distortion.pressedScale;
+
+  /// The radial glow's current opacity.
   double get touchFeedbackOpacity => _distortion.touchFeedbackOpacity;
+
+  /// The pointer's local Y, used to place the radial glow.
   double get pointerLocalY => _distortion.pointerLocalY;
+
+  /// The X about which the track scales.
   double get transformOriginX => _distortion.transformOriginX;
 
   // Velocity-shear corrected scales for the pill
@@ -151,22 +184,25 @@ class PillJellyController extends ChangeNotifier {
     if (active) {
       _idleDeadline = null;
       if (!_ticker.isActive) {
-        _ticker.start();
+        unawaited(_ticker.start());
       }
     } else {
       _idleDeadline =
           (_lastElapsed ?? Duration.zero) + const Duration(milliseconds: 500);
       if (!_ticker.isActive) {
-        _ticker.start();
+        unawaited(_ticker.start());
       }
     }
   }
 
+  /// Records the measured track width and passes it to the distortion layer.
   void setTrackWidth(double width) {
     _distortion.setTrackWidth(width);
     notifyListeners();
   }
 
+  /// Pointer-down entry point. Snaps the target toward the touched tab when
+  /// `snapOnPointerDown` is enabled, inflates the press, and starts the loop.
   void beginGesture(double localX, double localY, double absoluteX) {
     _distortion.begin(localX, localY, absoluteX);
     _downX = localX;
@@ -188,6 +224,9 @@ class PillJellyController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Pointer-move entry point. Moves the pill target by the horizontal drag
+  /// distance (or vertical when recording) and forwards the vertical
+  /// translation to the distortion layer.
   void updateGesture(
     double horizontalTranslation,
     double verticalTranslation,
@@ -215,6 +254,8 @@ class PillJellyController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Pointer-up entry point. Settles to the tapped tab (stationary) or the
+  /// nearest tab (after a drag), releases the pill, and confirms the press.
   void finishGesture() {
     _frameState.isDragging = 0;
 
@@ -241,6 +282,7 @@ class PillJellyController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Selects a tab programmatically (e.g. from a semantics tap action).
   void activateTab(int index) {
     if (_items.isEmpty) return;
 
@@ -277,6 +319,7 @@ class PillJellyController extends ChangeNotifier {
     }
   }
 
+  /// Animates the pill toward an externally-controlled selection index.
   void setControlledSelectedIndex(int? selectedIndex) {
     final nextIndex = _getControlledSelectedIndex(
       selectedIndex,

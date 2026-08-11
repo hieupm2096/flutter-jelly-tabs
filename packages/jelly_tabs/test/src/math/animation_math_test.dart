@@ -178,12 +178,13 @@ void main() {
       const config = DefaultPillJelly.frameConfig;
 
       // Simulate press
-      state.pressTarget = 1;
-      state.shapeTarget = 1.3;
-      state.pressProgress = 1;
-      state.baseScaleX = 1.3;
-      state.baseScaleY = 1.3;
-      state.releasePending = 0;
+      state
+        ..pressTarget = 1
+        ..shapeTarget = 1.3
+        ..pressProgress = 1
+        ..baseScaleX = 1.3
+        ..baseScaleY = 1.3
+        ..releasePending = 0;
 
       // Advance many frames
       for (var i = 0; i < 60; i++) {
@@ -198,16 +199,16 @@ void main() {
       final state = PillJellyFrameState();
       const config = DefaultPillJelly.frameConfig;
 
-      state.pressTarget = 1;
-      state.shapeTarget = 1.3;
-      state.pressProgress = 1;
-      state.baseScaleX = 1.3;
-      state.baseScaleY = 1.3;
-
-      // Simulate release
-      state.pressTarget = 0;
-      state.shapeTarget = 1;
-      state.releasePending = 1;
+      state
+        ..pressTarget = 1
+        ..shapeTarget = 1.3
+        ..pressProgress = 1
+        ..baseScaleX = 1.3
+        ..baseScaleY = 1.3
+        // Simulate release
+        ..pressTarget = 0
+        ..shapeTarget = 1
+        ..releasePending = 1;
 
       // Settle
       for (var i = 0; i < 300; i++) {

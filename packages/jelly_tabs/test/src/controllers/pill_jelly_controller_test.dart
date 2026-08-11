@@ -45,7 +45,7 @@ void main() {
     PillJellyController buildSubject({int? selectedIndex}) {
       return PillJellyController(
         items: items,
-        vsync: TestVSync(),
+        vsync: const TestVSync(),
         selectedIndex: selectedIndex,
         onTabPress: onTabPress,
         onTabChange: onTabChange,
@@ -116,9 +116,10 @@ void main() {
         subject.setTrackWidth(400);
         await tester.pump();
 
-        subject.beginGesture(150, 30, 150);
-        // drag +98px = +1 tab from snap point 1 → 2
-        subject.updateGesture(98, 0, 150, 150);
+        subject
+          ..beginGesture(150, 30, 150)
+          // drag +98px = +1 tab from snap point 1 → 2
+          ..updateGesture(98, 0, 150, 150);
 
         expect(subject.frameState.targetValue, closeTo(2, 1e-6));
         subject.finishGesture();
@@ -135,8 +136,9 @@ void main() {
         subject.setTrackWidth(400);
         await tester.pump();
 
-        subject.beginGesture(150, 30, 150);
-        subject.finishGesture();
+        subject
+          ..beginGesture(150, 30, 150)
+          ..finishGesture();
 
         expect(subject.selectedIndex, 1);
         await pumpFrames(tester);
@@ -150,9 +152,10 @@ void main() {
         subject.setTrackWidth(400);
         await tester.pump();
 
-        subject.beginGesture(150, 30, 150);
-        subject.updateGesture(120, 0, 150, 150);
-        subject.finishGesture();
+        subject
+          ..beginGesture(150, 30, 150)
+          ..updateGesture(120, 0, 150, 150)
+          ..finishGesture();
 
         // dragStartTarget=1, +120/98≈1.22 → targetValue≈2.22 → round=2
         expect(subject.selectedIndex, 2);
@@ -173,8 +176,9 @@ void main() {
           subject.setTrackWidth(400);
           await tester.pump();
 
-          subject.beginGesture(150, 30, 150);
-          subject.finishGesture();
+          subject
+            ..beginGesture(150, 30, 150)
+            ..finishGesture();
 
           expect(subject.selectedIndex, 0);
           expect(changeCount, 0);
@@ -192,8 +196,9 @@ void main() {
         subject.setTrackWidth(400);
         await tester.pump();
 
-        subject.beginGesture(150, 30, 150);
-        subject.finishGesture();
+        subject
+          ..beginGesture(150, 30, 150)
+          ..finishGesture();
 
         expect(events, hasLength(1));
         expect(events.first.index, 1);

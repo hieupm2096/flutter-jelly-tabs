@@ -15,11 +15,16 @@ bool _isSpringAtRest(double displacement, double velocity) {
       velocity.abs() < _springRestEpsilon;
 }
 
+/// The output of one spring step: a [value] and its [velocity].
 @visibleForTesting
 class SpringStep {
+  /// Creates a [SpringStep].
   const SpringStep({required this.value, required this.velocity});
 
+  /// The spring's value after the step.
   final double value;
+
+  /// The spring's velocity after the step.
   final double velocity;
 }
 
@@ -260,6 +265,8 @@ double getPointerOrigin(
   return pointerPosition.clamp(0.0, dimension);
 }
 
+/// Hyperbolic sine, used by the overdamped spring solution.
 double sinh(double x) => (math.exp(x) - math.exp(-x)) / 2;
 
+/// Hyperbolic cosine, used by the overdamped spring solution.
 double cosh(double x) => (math.exp(x) + math.exp(-x)) / 2;

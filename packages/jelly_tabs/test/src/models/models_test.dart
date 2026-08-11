@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jelly_tabs/src/config/config.dart';
@@ -52,14 +50,14 @@ void main() {
 
   group(JellyTabsItem, () {
     test('holds key, label, icons, and optional fields', () {
-      final item = JellyTabsItem(
+      const item = JellyTabsItem(
         key: 'home',
         label: 'Home',
         activeIcon: _testIcon,
         inactiveIcon: _testIcon,
         accessibilityLabel: 'Home tab',
         badge: '3',
-        testID: const Key('home-tab'),
+        testID: Key('home-tab'),
       );
 
       expect(item.key, 'home');
@@ -70,7 +68,7 @@ void main() {
     });
 
     test('badge accepts number', () {
-      final item = JellyTabsItem(
+      const item = JellyTabsItem(
         key: 'notifications',
         label: 'Notifications',
         activeIcon: _testIcon,
@@ -82,13 +80,13 @@ void main() {
     });
 
     test('implements value equality', () {
-      final a = JellyTabsItem(
+      const a = JellyTabsItem(
         key: 'home',
         label: 'Home',
         activeIcon: _testIcon,
         inactiveIcon: _testIcon,
       );
-      final b = JellyTabsItem(
+      const b = JellyTabsItem(
         key: 'home',
         label: 'Home',
         activeIcon: _testIcon,
@@ -99,13 +97,13 @@ void main() {
     });
 
     test('different keys are not equal', () {
-      final a = JellyTabsItem(
+      const a = JellyTabsItem(
         key: 'home',
         label: 'Home',
         activeIcon: _testIcon,
         inactiveIcon: _testIcon,
       );
-      final b = JellyTabsItem(
+      const b = JellyTabsItem(
         key: 'search',
         label: 'Home',
         activeIcon: _testIcon,
@@ -118,27 +116,27 @@ void main() {
 
   group(JellyTabsChangeEvent, () {
     test('holds index and item', () {
-      final item = JellyTabsItem(
+      const item = JellyTabsItem(
         key: 'home',
         label: 'Home',
         activeIcon: _testIcon,
         inactiveIcon: _testIcon,
       );
-      final event = JellyTabsChangeEvent(index: 0, item: item);
+      const event = JellyTabsChangeEvent(index: 0, item: item);
 
       expect(event.index, 0);
       expect(event.item, equals(item));
     });
 
     test('implements value equality', () {
-      final item = JellyTabsItem(
+      const item = JellyTabsItem(
         key: 'home',
         label: 'Home',
         activeIcon: _testIcon,
         inactiveIcon: _testIcon,
       );
-      final a = JellyTabsChangeEvent(index: 0, item: item);
-      final b = JellyTabsChangeEvent(index: 0, item: item);
+      const a = JellyTabsChangeEvent(index: 0, item: item);
+      const b = JellyTabsChangeEvent(index: 0, item: item);
 
       expect(a, equals(b));
     });

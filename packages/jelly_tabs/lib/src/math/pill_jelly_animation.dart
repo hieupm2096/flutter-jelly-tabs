@@ -6,23 +6,56 @@ import 'package:jelly_tabs/src/math/animation_math.dart';
 /// Mutable state for the pill jelly frame loop, mirroring
 /// Reanimated shared values in `pill-jelly-animation.ts`.
 class PillJellyFrameState {
-  var baseScaleX = 1.0;
-  var baseScaleXRate = 0.0;
-  var baseScaleY = 1.0;
-  var baseScaleYRate = 0.0;
-  var filteredVelocity = 0.0;
-  var filteredVelocityRate = 0.0;
-  var isDragging = 0.0;
-  var pressProgress = 0.0;
-  var pressProgressRate = 0.0;
-  var pressTarget = 0.0;
-  var rawPanelOffset = 0.0;
-  var rawPanelOffsetVelocity = 0.0;
-  var releasePending = 0.0;
-  var shapeTarget = 1.0;
-  var targetValue = 0.0;
-  var value = 0.0;
-  var valueVelocity = 0.0;
+  /// Horizontal pill scale, spring-driven toward [shapeTarget].
+  double baseScaleX = 1;
+
+  /// Velocity of [baseScaleX].
+  double baseScaleXRate = 0;
+
+  /// Vertical pill scale, spring-driven toward [shapeTarget].
+  double baseScaleY = 1;
+
+  /// Velocity of [baseScaleY].
+  double baseScaleYRate = 0;
+
+  /// Filtered pill velocity used for velocity-shear correction.
+  double filteredVelocity = 0;
+
+  /// Velocity of [filteredVelocity].
+  double filteredVelocityRate = 0;
+
+  /// 1 while a gesture is active, 0 otherwise.
+  double isDragging = 0;
+
+  /// Press inflation progress (0 → 1).
+  double pressProgress = 0;
+
+  /// Velocity of [pressProgress].
+  double pressProgressRate = 0;
+
+  /// The press-inflation target (1 while pressed, 0 on release).
+  double pressTarget = 0;
+
+  /// The raw, unclamped panel horizontal offset.
+  double rawPanelOffset = 0;
+
+  /// Velocity of [rawPanelOffset].
+  double rawPanelOffsetVelocity = 0;
+
+  /// 1 while a settle is pending after release, 0 otherwise.
+  double releasePending = 0;
+
+  /// The pill's scale target (1 at rest, `pressedScale` while pressed).
+  double shapeTarget = 1;
+
+  /// The target tab position (0..maxTabIndex).
+  double targetValue = 0;
+
+  /// The pill's current tab position.
+  double value = 0;
+
+  /// Velocity of [value].
+  double valueVelocity = 0;
 }
 
 /// Advances the pill jelly frame state by one step, mirroring
@@ -46,8 +79,9 @@ void advancePillJellyFrame(
     spring: config.springs.value,
     dt: dt,
   );
-  state.value = valueStep.value;
-  state.valueVelocity = valueStep.velocity;
+  state
+    ..value = valueStep.value
+    ..valueVelocity = valueStep.velocity;
 
   final velocityTarget = (state.isDragging > 0 && maxIndex > 0)
       ? state.valueVelocity / maxIndex
@@ -59,8 +93,9 @@ void advancePillJellyFrame(
     spring: config.springs.velocity,
     dt: dt,
   );
-  state.filteredVelocity = velocityStep.value;
-  state.filteredVelocityRate = velocityStep.velocity;
+  state
+    ..filteredVelocity = velocityStep.value
+    ..filteredVelocityRate = velocityStep.velocity;
 
   // rawPanelOffset only springs back when not dragging
   if (state.isDragging == 0) {
@@ -71,8 +106,9 @@ void advancePillJellyFrame(
       spring: config.springs.panel,
       dt: dt,
     );
-    state.rawPanelOffset = panelStep.value;
-    state.rawPanelOffsetVelocity = panelStep.velocity;
+    state
+      ..rawPanelOffset = panelStep.value
+      ..rawPanelOffsetVelocity = panelStep.velocity;
   }
 
   // settle released indicator
@@ -80,9 +116,10 @@ void advancePillJellyFrame(
     final releaseThreshold =
         config.releaseDistanceFraction * math.max(1, maxIndex);
     if ((state.value - state.targetValue).abs() < releaseThreshold) {
-      state.releasePending = 0;
-      state.pressTarget = 0;
-      state.shapeTarget = 1;
+      state
+        ..releasePending = 0
+        ..pressTarget = 0
+        ..shapeTarget = 1;
     }
   }
 
@@ -93,8 +130,9 @@ void advancePillJellyFrame(
     spring: config.springs.press,
     dt: dt,
   );
-  state.pressProgress = pressStep.value;
-  state.pressProgressRate = pressStep.velocity;
+  state
+    ..pressProgress = pressStep.value
+    ..pressProgressRate = pressStep.velocity;
 
   final scaleXStep = advanceSpring(
     state.baseScaleX,
@@ -103,8 +141,9 @@ void advancePillJellyFrame(
     spring: config.springs.scaleX,
     dt: dt,
   );
-  state.baseScaleX = scaleXStep.value;
-  state.baseScaleXRate = scaleXStep.velocity;
+  state
+    ..baseScaleX = scaleXStep.value
+    ..baseScaleXRate = scaleXStep.velocity;
 
   final scaleYStep = advanceSpring(
     state.baseScaleY,
@@ -113,6 +152,7 @@ void advancePillJellyFrame(
     spring: config.springs.scaleY,
     dt: dt,
   );
-  state.baseScaleY = scaleYStep.value;
-  state.baseScaleYRate = scaleYStep.velocity;
+  state
+    ..baseScaleY = scaleYStep.value
+    ..baseScaleYRate = scaleYStep.velocity;
 }
