@@ -422,22 +422,28 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 
 ## Phase 6 — Example App (web/android/iOS)
 
+> **Phase 6 complete** (`b126dae`): Task 6.1 implemented. The example was
+> de-flavored (VGV template flavors removed from Android/iOS; single
+> `lib/main.dart`) so the plain `flutter build apk --debug` /
+> `flutter build ios --simulator` / `flutter build web` commands succeed.
+> bloc/l10n/counter template cruft removed.
+
 ### Task 6.1: Scaffold + integrate
 
 **Files:**
 - Create: `example/**` (VGV `flutter_app` template)
 - Modify: `example/lib/main.dart`
 
-- [ ] **Step 1: Scaffold** via `create-project` skill (`flutter_app` template).
-- [ ] **Step 2: Write the failing test** — `example/test/...` asserting the example renders the
+- [x] **Step 1: Scaffold** via `create-project` skill (`flutter_app` template).
+- [x] **Step 2: Write the failing test** — `example/test/...` asserting the example renders the
       tab bar with configured items.
-- [ ] **Step 3: Implement** — `main.dart` demonstrating `JellyTabBarHeadless` with custom icons,
+- [x] **Step 3: Implement** — `main.dart` demonstrating `JellyTabBarHeadless` with custom icons,
       colors, badge, `onTabChange` switching a body index; a customization showcase page
       (displayScale, maxWidth, backdrops).
-- [ ] **Step 4: Run to verify it passes** — `flutter test` in `example/`.
-- [ ] **Step 5: Build all targets** — `flutter build apk --debug`, `flutter build ios --simulator`,
+- [x] **Step 4: Run to verify it passes** — `flutter test` in `example/`.
+- [x] **Step 5: Build all targets** — `flutter build apk --debug`, `flutter build ios --simulator`,
       `flutter build web`. Verify all three succeed.
-- [ ] **Step 6: Commit** — `git commit -am "feat: jelly tabs example app"`
+- [x] **Step 6: Commit** — `git commit -am "feat: jelly tabs example app"`
 
 ## Phase 7 — Documentation, Release Prep, Review
 
