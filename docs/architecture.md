@@ -1,7 +1,7 @@
 ---
 type: Architecture Document
 title: flutter_jelly_tabs — Architecture
-description: Technical design for the Flutter port — RN-to-Flutter module mapping, rendering model, spring engine, controllers, gesture layer, and testing strategy.
+description: Technical design for the Flutter package — reference-to-Flutter module mapping, rendering model, spring engine, controllers, gesture layer, and testing strategy.
 tags: [flutter, architecture, jelly-tabs]
 timestamp: 2026-08-08T00:00:00Z
 ---
@@ -13,12 +13,12 @@ timestamp: 2026-08-08T00:00:00Z
 
 ## 1. Overview
 
-`flutter_jelly_tabs` is a Flutter **UI package** (per the VGV `ui-package` skill) that ports the
-RN `react-native-jelly-tabs` engine. The architecture mirrors the RN source module-for-module so
+`flutter_jelly_tabs` is a Flutter **UI package** (per the VGV `ui-package` skill) that reimplements
+the reference jelly-tabs engine. The architecture mirrors the reference source module-for-module so
 behavior, parameters, and config stay 1:1, while replacing Reanimated / Gesture Handler /
 MaskedView with pure-Flutter equivalents.
 
-| RN module | Flutter port | Responsibilities |
+| Reference module | Flutter port | Responsibilities |
 | --- | --- | --- |
 | `src/constants.ts` | `lib/src/config/` | Defaults, resolved config, deep-partial override |
 | `src/utils/animation.ts` | `lib/src/math/animation_math.dart` | `easeOut`, `rubberBand`, spring solver, tab geometry |
@@ -93,8 +93,8 @@ are not rebuilt every frame (VGV `animations` skill).
 
 ### 3.2 Pill reveal — the MaskedView replacement
 
-RN uses `@react-native-masked-view/masked-view` (native) with a CSS-clip fallback (web).
-Flutter has no MaskedView; we implement the pill reveal **identically on all platforms**
+The reference uses `@react-native-masked-view/masked-view` (native) with a CSS-clip fallback
+(web).Flutter has no MaskedView; we implement the pill reveal **identically on all platforms**
 using `ClipPath` with a custom `CustomClipper<Path>` that rebuilds the pill shape each frame
 from the controller's animated values (position `value`, `baseScaleX`, `baseScaleY`,
 velocity shear corrections, `tabWidth`, `itemHeight`).
@@ -116,12 +116,12 @@ class PillPathClipper extends CustomClipper<Path> {
 
 The selected-content layer (selected surface + active icons) is `ClipPath`'d to the pill
 capsule. The clipper returns the fully transformed rounded-rect path, so we get translate +
-scale + velocity shear in one place — the same math as RN's `getPillMaskStyle` +
+scale + velocity shear in one place — the same math as the reference's `getPillMaskStyle` +
 `pillContentStyle`, folded into a single path (no inverse-transform bookkeeping needed).
 
 ### 3.3 Touch feedback (SVG → Flutter gradient)
 
-RN renders an SVG `RadialGradient`. Flutter equivalent: a `Container` with
+The reference renders an SVG `RadialGradient`. Flutter equivalent: a `Container` with
 `BoxDecoration(gradient: RadialGradient(...))`, sized `diameter x diameter`, positioned by an
 animated `Transform.translate` driven by `transformOriginX`/`pointerLocalY`. Stops copied from
 `touch-feedback.tsx`:
@@ -181,7 +181,7 @@ Reanimated shared values. The controller exposes them as `ValueNotifier`s / a si
 - Owns `PillJellyFrameState` + gesture bookkeeping (`downX`, `movedDistance`,
   `dragStartTarget`, `dragStartPanelOffset`, `isDragging`, `webTrackPageX`/local offset).
 - Owns a `Ticker` (via `TickerProviderStateMixin` in the widget, or a passed-in `TickerProvider`)
-  with the same active/inactive + 500ms-settle logic as RN's `setFrameLoopActive`.
+  with the same active/inactive + 500ms-settle logic as the reference's `setFrameLoopActive`.
 - Public API (called from the gesture layer and the widget):
   - `beginGesture(localX, localY, absoluteX)` — snap-on-pointer-down, pressTarget=1,
     shapeTarget=pressedScale, isDragging=1.
@@ -211,8 +211,8 @@ ever needs continuous per-frame retargeting of a running spring.
     controller.velocity))` per value. Starting a new `animateWith` while one is in flight
     interrupts it and `controller.velocity` reflects the in-flight simulation's current velocity —
     this reproduces Reanimated's "retarget from current value+velocity, cancel the previous
-    animation" behavior (RN calls `cancelAnimation` explicitly in `begin()`) without any custom
-    stepper.
+    animation" behavior (the reference calls `cancelAnimation` explicitly in `begin()`) without any
+    custom stepper.
 - **Direct, computed every frame during `update()` (no spring, no interpolation):**
   - `progress = min(|verticalTranslation| / max(distanceForMaxDistortion, 1e-4), 1)`
   - `translateY = dragOriginY + rubberBand(verticalTranslation, trackHeight, verticalDrag.rubberBand) * verticalDrag.follow`
@@ -226,20 +226,21 @@ ever needs continuous per-frame retargeting of a running spring.
 
 ## 6. Gesture Layer
 
-RN uses `Gesture.Pan().minDistance(0)` + optional simultaneous `Gesture.LongPress()`.
+The reference uses `Gesture.Pan().minDistance(0)` + optional simultaneous `Gesture.LongPress()`.
 
 Flutter's `GestureDetector` pan recognizer applies a touch-slop, which breaks min-distance-0
-semantics. Instead, mirror the RN worklets with raw pointer events:
+semantics. Instead, mirror the reference worklets with raw pointer events:
 
 - `Listener(onPointerDown/Move/Up/Cancel)` on the track provides touch-slop-free tracking,
-  computing `localX`, `localY`, `absoluteX` like RN's `onTouchesDown`/`onUpdate` worklets.
+  computing `localX`, `localY`, `absoluteX` like the reference's `onTouchesDown`/`onUpdate`
+  worklets.
 - A long-press `Timer` (500ms, cancelled on move >10px or up) fires `onTabLongPress`.
-- Recording mode keeps RN's X/Y swap for vertical-scroll demos.
+- Recording mode keeps the reference's X/Y swap for vertical-scroll demos.
 
 All gesture math (downX, targetValue, rawPanelOffset, movedDistance, nearest-tab settle) lives in
-`pill_jelly_controller.dart` exactly as in RN, so behavior is preserved. This is the **only** place
-we intentionally diverge from Flutter's default gesture API, and the divergence is invisible to
-consumers.
+`pill_jelly_controller.dart` exactly as in the reference, so behavior is preserved. This is the
+**only** place we intentionally diverge from Flutter's default gesture API, and the divergence is
+invisible to consumers.
 
 ## 7. Config Resolution
 
@@ -250,10 +251,10 @@ consumers.
   values.
 - `JellyTabsConfigOverride` — the deep-partial form (all fields nullable) accepted by the widget.
 - `resolveJellyTabsConfig([override])` — merges nested `springs` and `touchFeedback`/`verticalDrag`
-  maps exactly like RN's `resolveTabBarConfig` (spread-per-nested-object, not a generic deep merge,
-  so partial overrides don't wipe sibling defaults).
+  maps exactly like the reference's `resolveTabBarConfig` (spread-per-nested-object, not a generic
+  deep merge, so partial overrides don't wipe sibling defaults).
 
-Defaults are copied verbatim from RN (see `docs/design.md` §5.5).
+Defaults are copied verbatim from the reference (see `docs/design.md` §5.5).
 
 ## 8. Accessibility & Semantics
 
@@ -261,17 +262,17 @@ Defaults are copied verbatim from RN (see `docs/design.md` §5.5).
   `label`), and `SemanticsAction.tap` → `activateTab`, plus a custom long-press action when
   `onTabLongPress` is set.
 - The visual-only layers (surface, pill, icons, glow) are excluded from the semantics tree
-  (`ExcludeSemantics`) so screen readers hit exactly one tab node per item, like RN's
+  (`ExcludeSemantics`) so screen readers hit exactly one tab node per item, like the reference's
   `accessibilityTabsRow`.
-- **Keyboard/focus (web/desktop, no RN equivalent).** Each tab is wrapped in a `Focus` node
+- **Keyboard/focus (web/desktop, no reference equivalent).** Each tab is wrapped in a `Focus` node
   (traversal order = item order via `FocusTraversalGroup` + `OrderedTraversalPolicy`); arrow keys
   move focus between tabs, and `Enter`/`Space` while focused calls the same `activateTab(index)`
   path as a tap, via `Shortcuts` + `Actions`/`CallbackAction` on `ActivateIntent`. The semantics
   row stays pointer-transparent (`IgnorePointer`), so physical taps still reach the `Listener` —
   focus is keyboard-only. Focus ring uses the theme's `focusColor`; the per-tab `Semantics` node
-  carries `focusable`/`focused` so screen readers see exactly one tab node per item. This has no
-  RN source to port from — RN targets touch only — so it's new surface area, not a port, and is
-  tested separately from behavior-parity tests (`test/src/widgets/keyboard_focus_test.dart`).
+  carries `focusable`/`focused` so screen readers see exactly one tab node per item. The reference
+  targets touch only, so this is new surface area, not a port, and is tested separately from
+  behavior-parity tests (`test/src/widgets/keyboard_focus_test.dart`).
 
 ## 9. Testing Strategy
 
@@ -311,8 +312,8 @@ with fixed `dtMs`. Follow VGV `animations` reference (`injected controllers`, `a
 
 | Risk | Mitigation |
 | --- | --- |
-| Reanimated `withSpring` ≠ Flutter `SpringSimulation` in edge cases | **Resolved (§5.2).** Verified against source: `DistortionController` only springs on `begin()`/`end()` (fire-and-forget, never retargeted mid-drag) — `SpringSimulation` via `AnimationController.animateWith(current value, current velocity)` reproduces Reanimated's retarget-and-cancel semantics exactly. Mid-drag `translateY`/`scaleX`/`transformOriginX` are direct computed assignments in RN too, not springs — ported the same way, no interpolation engine needed there |
+| Reanimated `withSpring` ≠ Flutter `SpringSimulation` in edge cases | **Resolved (§5.2).** Verified against source: `DistortionController` only springs on `begin()`/`end()` (fire-and-forget, never retargeted mid-drag) — `SpringSimulation` via `AnimationController.animateWith(current value, current velocity)` reproduces Reanimated's retarget-and-cancel semantics exactly. Mid-drag `translateY`/`scaleX`/`transformOriginX` are direct computed assignments in the reference too, not springs — ported the same way, no interpolation engine needed there |
 | `ClipPath` reclip performance on every frame | Reclip only on `ValueNotifier` change; small clip subtree (`RepaintBoundary`) |
 | Velocity-shear sign conventions | Transcribe `getPillMaskStyle`/`pillContentStyle` math verbatim; frame-sequence tests pin exact values |
 | Web parity (hover/scroll vs touch) | `Listener` works on web; example QA on web + native |
-| Icon API ergonomics vs RN | `JellyTabsIconBuilder` typedef mirrors RN's component signature; documented in dartdoc + example |
+| Icon API ergonomics vs the reference | `JellyTabsIconBuilder` typedef mirrors the reference's component signature; documented in dartdoc + example |

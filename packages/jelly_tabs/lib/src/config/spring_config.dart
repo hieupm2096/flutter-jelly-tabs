@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 /// The two parameters of the analytical damped-spring solver used for the pill
-/// jelly springs. Mirrors RN's `SpringConfig` (`stiffness` + `dampingRatio`).
+/// jelly springs. Mirrors the reference `SpringConfig` (`stiffness` +
+/// `dampingRatio`).
 @immutable
 class SpringConfig {
   /// Creates a [SpringConfig].
@@ -26,8 +27,8 @@ class SpringConfig {
 }
 
 /// The physical spring parameters driving the track distortion, ported from
-/// RN's `distortion.spring` (`damping`, `mass`, `stiffness`) and fed to
-/// Flutter's `SpringDescription`/`SpringSimulation`.
+/// the reference's `distortion.spring` (`damping`, `mass`, `stiffness`) and fed
+/// to Flutter's `SpringDescription`/`SpringSimulation`.
 @immutable
 class DistortionSpringConfig {
   /// Creates a [DistortionSpringConfig].

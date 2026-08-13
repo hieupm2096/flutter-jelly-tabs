@@ -2,12 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 
-/// A blurred backdrop for the tab bar, mirroring the RN example's use of
-/// `expo-blur`'s `BlurView`.
+/// A blurred backdrop for the tab bar, mirroring the reference example's use
+/// of `expo-blur`'s `BlurView`.
 ///
 /// `intensity` mirrors `expo-blur`'s 1-100 intensity scale; it is mapped to a
 /// Gaussian sigma via `intensity / 5` so the default pill (20) and track (35)
-/// look like the RN demo.
+/// look like the reference demo.
 class BlurView extends StatelessWidget {
   const BlurView({
     required this.intensity,

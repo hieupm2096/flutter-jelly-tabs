@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:jelly_tabs/src/config/defaults.dart';
 import 'package:jelly_tabs/src/config/spring_config.dart';
 
-/// The layout geometry of the tab bar, mirroring RN's `TabBarLayout`.
+/// The layout geometry of the tab bar.
 @immutable
 class JellyTabsLayout {
   /// Creates a [JellyTabsLayout].
@@ -89,7 +89,7 @@ class JellyTabsLayoutOverride {
   final double? trackInset;
 }
 
-/// The resolved tab bar colors, mirroring RN's `TabBarColors`.
+/// The resolved tab bar colors.
 @immutable
 class JellyTabsColors {
   /// Creates a [JellyTabsColors].
@@ -150,7 +150,7 @@ class JellyTabsColorsOverride {
   final Color? surface;
 }
 
-/// The resolved layer opacities, mirroring RN's `TabBarOpacity`.
+/// The resolved layer opacities.
 @immutable
 class JellyTabsOpacity {
   /// Creates a [JellyTabsOpacity].
@@ -332,7 +332,7 @@ class PillJellyFrameConfigOverride {
   final PillJellySpringsConfigOverride? springs;
 }
 
-/// The pill jelly physics config, mirroring RN's `PillJellyConfig`.
+/// The pill jelly physics config.
 @immutable
 class PillJellyConfig {
   /// Creates a [PillJellyConfig].
@@ -504,7 +504,7 @@ class VerticalDragConfigOverride {
   final double? rubberBand;
 }
 
-/// The resolved distortion config, mirroring RN's `DistortionConfig`.
+/// The resolved distortion config.
 @immutable
 class DistortionConfig {
   /// Creates a [DistortionConfig].
@@ -617,7 +617,8 @@ class JellyTabsConfigOverride {
 }
 
 /// Resolves a deep-partial [JellyTabsConfigOverride] against the defaults,
-/// merging nested-object-per-key exactly like RN's `resolveTabBarConfig`.
+/// merging nested-object-per-key exactly like the reference's
+/// `resolveTabBarConfig`.
 JellyTabsConfig resolveJellyTabsConfig([JellyTabsConfigOverride? override]) {
   final layoutOverride = override?.layout;
   final distortionOverride = override?.distortion;

@@ -4,13 +4,13 @@ import 'package:jelly_tabs/src/config/defaults.dart';
 import 'package:jelly_tabs/src/models/jelly_tabs_icon_builder.dart';
 import 'package:jelly_tabs/src/models/jelly_tabs_icon_props.dart';
 
-/// A single tab: icon + label + optional badge, ported from
-/// `react-native-jelly-tabs`'s `TabItem`.
+/// A single tab: icon + label + optional badge.
 ///
 /// When [isActive] is true it renders [activeIcon] with [activeColor] and a
 /// bold label; otherwise [inactiveIcon] with [inactiveColor] and a regular
 /// label. The optional [badge] is a small pill anchored to the icon's top-right
-/// corner. [displayScale] scales the geometry exactly like RN's `displayScale`.
+/// corner. [displayScale] scales the geometry exactly like the reference's
+/// `displayScale`.
 class TabItem extends StatelessWidget {
   /// Creates a [TabItem].
   const TabItem({

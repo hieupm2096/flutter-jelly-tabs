@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// A [CustomClipper] that produces the jelly pill's capsule shape, ported from
-/// the RN `pill-masked-view` mask element.
+/// A [CustomClipper] that produces the jelly pill's capsule shape.
 ///
 /// The path is drawn in the overscan-sized content layer's coordinate space:
 /// the pill is a capsule of [tabWidth] by [itemHeight] whose center sits at
@@ -54,7 +53,7 @@ class PillPathClipper extends CustomClipper<Path> {
       height: itemHeight * scaleY,
     );
     // Scaling the capsule about its center turns its circular corners into
-    // ellipses, exactly like the RN transform applied to the mask element.
+    // ellipses, exactly like the reference's mask transform.
     final radiusX = itemHeight / 2 * scaleX;
     final radiusY = itemHeight / 2 * scaleY;
     final corner = Radius.elliptical(radiusX, radiusY);

@@ -54,7 +54,7 @@ const _items = [
 String _randomBackground(int width, int height) =>
     'https://picsum.photos/$width/$height?random=${math.Random().nextInt(1000000)}';
 
-/// The single-screen demo, mirroring the RN example's `HomeScreen`: a
+/// The single-screen demo, mirroring the reference example's `HomeScreen`: a
 /// full-bleed background, a live [ColorCustomizer], and a [JellyTabBarHeadless]
 /// with blurred backdrops driven by the customizer's state.
 class HomePage extends StatefulWidget {
@@ -280,7 +280,8 @@ class _HomePageState extends State<HomePage> {
 }
 
 /// Fallback background when no shuffled image is set (or a network image
-/// fails to load). Mirrors the RN example's bundled `color-lab-background.png`.
+/// fails to load). Mirrors the reference example's bundled
+/// `color-lab-background.png`.
 class _LocalBackground extends StatelessWidget {
   const _LocalBackground();
 

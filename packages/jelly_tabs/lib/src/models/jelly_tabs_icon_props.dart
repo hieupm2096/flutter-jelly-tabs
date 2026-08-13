@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:jelly_tabs/src/config/config.dart';
 
-/// The resolved styling passed to a `JellyTabsIconBuilder`, mirroring the RN
-/// `TabsIcon` component's props.
+/// The resolved styling passed to a `JellyTabsIconBuilder`, mirroring the
+/// reference `TabsIcon` component's props.
 @immutable
 class JellyTabsIconProps {
   /// Creates a [JellyTabsIconProps].

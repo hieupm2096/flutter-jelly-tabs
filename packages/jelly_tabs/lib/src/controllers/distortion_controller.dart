@@ -7,12 +7,12 @@ import 'package:jelly_tabs/src/config/config.dart';
 import 'package:jelly_tabs/src/math/animation_math.dart';
 
 /// Drives the track distortion on vertical drag, press inflation, and the
-/// radial touch-feedback glow, ported from `use-distortion.ts`.
+/// radial touch-feedback glow.
 ///
 /// Horizontal drag is handled by `PillJellyController`; this controller only
 /// owns the vertical/scale animations. During a gesture the vertical
-/// translation and scaleX are applied as direct assignments (matching RN's
-/// un-sprung `update`); on release everything springs back via
+/// translation and scaleX are applied as direct assignments (matching the
+/// reference's un-sprung `update`); on release everything springs back via
 /// `distortion.spring` (`SpringSimulation`).
 class DistortionController extends ChangeNotifier {
   /// Creates a [DistortionController].
@@ -113,7 +113,7 @@ class DistortionController extends ChangeNotifier {
   }
 
   /// Called each frame during a drag. Direct assignments (no spring),
-  /// matching RN's un-sprung `update`.
+  /// matching the reference's un-sprung `update`.
   void update(double verticalTranslation, double absoluteX, [double? localX]) {
     final appliedTranslation =
         rubberBand(

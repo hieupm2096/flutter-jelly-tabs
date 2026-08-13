@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:jelly_tabs/src/widgets/pill_path_clipper.dart';
 
 /// The selected-content layer clipped to the jelly pill's capsule, replacing
-/// `@react-native-masked-view/masked-view` (see `architecture.md` §3.2).
+/// the native masked view (see `architecture.md` §3.2).
 ///
 /// Wraps [child] in a [ClipPath] driven by [PillPathClipper], which folds the
-/// RN mask translate/scale into a single path. When [visible] is false the
-/// widget collapses to nothing, matching RN's hidden mask overscan layer.
+/// mask translate/scale into a single path. When [visible] is false the
+/// widget collapses to nothing, matching the reference's hidden mask overscan
+/// layer.
 class PillMaskedView extends StatelessWidget {
   /// Creates a [PillMaskedView].
   const PillMaskedView({

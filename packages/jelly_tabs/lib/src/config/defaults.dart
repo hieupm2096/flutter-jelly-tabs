@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:jelly_tabs/src/config/config.dart';
 import 'package:jelly_tabs/src/config/spring_config.dart';
 
-/// The default layout geometry, transcribed verbatim from RN's
+/// The default layout geometry, transcribed verbatim from the reference
 /// `TABBAR_LAYOUT` in `constants.ts`.
 abstract final class DefaultJellyTabsLayout {
   /// Default icon size in logical pixels.
@@ -25,7 +25,8 @@ abstract final class DefaultJellyTabsLayout {
   static const trackInset = 4.0;
 }
 
-/// The default tab bar colors, transcribed verbatim from RN's `TABBAR_COLORS`.
+/// The default tab bar colors, transcribed verbatim from the reference's
+/// `TABBAR_COLORS`.
 abstract final class DefaultJellyTabsColors {
   /// Default active content color.
   static const activeContent = Color(0xFF11100F);
@@ -40,7 +41,7 @@ abstract final class DefaultJellyTabsColors {
   static const surface = Color(0xFF22211F);
 }
 
-/// The default layer opacities, transcribed verbatim from RN's
+/// The default layer opacities, transcribed verbatim from the reference's
 /// `TABBAR_OPACITY`.
 abstract final class DefaultJellyTabsOpacity {
   /// Default active content opacity.
@@ -56,7 +57,7 @@ abstract final class DefaultJellyTabsOpacity {
   static const surface = 1.0;
 }
 
-/// The default pill jelly physics, transcribed verbatim from RN's
+/// The default pill jelly physics, transcribed verbatim from the reference's
 /// `PILL_JELLY` in `constants.ts`.
 abstract final class DefaultPillJelly {
   /// Default pill inflation scale while pressed.
@@ -86,7 +87,7 @@ abstract final class DefaultPillJelly {
   );
 }
 
-/// The default track distortion, transcribed verbatim from RN's
+/// The default track distortion, transcribed verbatim from the reference's
 /// `DISTORTION` in `constants.ts`.
 abstract final class DefaultDistortion {
   /// Default whole-track press inflation scale.

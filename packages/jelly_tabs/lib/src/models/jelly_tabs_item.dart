@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:jelly_tabs/src/models/jelly_tabs_icon_builder.dart';
 
-/// A single tab in a `JellyTabBarHeadless`, ported from
-/// `react-native-jelly-tabs`'s `TabsItem`.
+/// A single tab in a `JellyTabBarHeadless`.
 @immutable
 class JellyTabsItem {
   /// Creates a [JellyTabsItem].

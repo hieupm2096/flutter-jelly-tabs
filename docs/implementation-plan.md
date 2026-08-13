@@ -14,8 +14,8 @@ timestamp: 2026-08-08T00:00:00Z
 > `vgv-wingspan`'s `/review` pass before each PR. Follow TDD — test first, then implement, then
 > commit. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship a `jelly_tabs` Flutter package (headless jelly tab bar) with parity to
-`react-native-jelly-tabs`, plus a web/android/iOS example app, built to VGV standards.
+**Goal:** Ship a `jelly_tabs` Flutter package (headless jelly tab bar) with behavior/parameter/config
+parity, plus a web/android/iOS example app, built to VGV standards.
 
 **Architecture:** Pure-Flutter port — analytical damped-spring solver driven by a `Ticker`,
 ClipPath-based pill reveal, pointer-event gesture layer, `SpringSimulation` distortion. See
@@ -107,7 +107,7 @@ import 'package:jelly_tabs/src/config/defaults.dart';
 
 void main() {
   group(DefaultJellyTabsLayout, () {
-    test('matches react-native-jelly-tabs TABBAR_LAYOUT', () {
+    test('matches reference TABBAR_LAYOUT', () {
       expect(DefaultJellyTabsLayout.iconSize, 28);
       expect(DefaultJellyTabsLayout.itemHeight, 56);
       expect(DefaultJellyTabsLayout.maskOverscanX, 48);
@@ -124,7 +124,7 @@ void main() {
 
 - [x] **Step 2: Run to verify it fails** — `flutter test`. Expected: FAIL (file/class missing).
 - [x] **Step 3: Implement** — const classes `DefaultJellyTabsLayout`, `DefaultJellyTabsColors`,
-      `DefaultJellyTabsOpacity`, `DefaultPillJelly`, `DefaultDistortion` with all RN defaults.
+      `DefaultJellyTabsOpacity`, `DefaultPillJelly`, `DefaultDistortion` with all reference defaults.
 - [x] **Step 4: Run to verify it passes** — `flutter test`. Expected: PASS.
 - [x] **Step 5: Commit** — `git commit -am "feat: jelly tabs default config"`
 
@@ -144,7 +144,7 @@ void main() {
 - [x] **Step 3: Implement** — immutable `SpringConfig`, `JellyTabsLayout/Colors/Opacity/
       PillJellyFrameConfig/PillJellyConfig/DistortionConfig/JellyTabsConfig` + nullable
       `*Override` deep-partial forms + `resolveJellyTabsConfig([override])` merging
-      nested-object-per-key exactly like RN `resolveTabBarConfig`.
+      nested-object-per-key exactly like the reference's `resolveTabBarConfig`.
 - [x] **Step 4: Run to verify it passes**
 - [x] **Step 5: Commit** — `git commit -am "feat: resolved jelly tabs config"`
 
@@ -273,9 +273,9 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 - [x] **Step 3: Implement** — `DistortionController` per `architecture.md` §5.2: `begin`/`end`
       drive `pressedScale`, `touchFeedbackOpacity`, `translateY`, `scaleX` via
       `AnimationController.animateWith(SpringSimulation(SpringDescription(mass, stiffness,
-      damping), controller.value, target, controller.velocity))` (RN `distortion.spring`);
+      damping), controller.value, target, controller.velocity))` (reference `distortion.spring`);
       `update` sets `translateY`/`scaleX`/`transformOriginX` as plain field assignments +
-      `notifyListeners()`, matching RN's un-sprung `update()`.
+      `notifyListeners()`, matching the reference's un-sprung `update()`.
 - [x] **Step 4: Run to verify it passes**
 - [x] **Step 5: Commit** — `git commit -am "feat: distortion controller"`
 
@@ -415,7 +415,7 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
       selected state, pressed pill (pump fixed progress), badge appearance — via `pumpApp` +
       `matchesGoldenFile`.
 - [x] **Step 2: Generate goldens** — `flutter test --update-goldens`.
-- [x] **Step 3: Review generated images** against RN demo screenshots (manual parity check).
+- [x] **Step 3: Review generated images** against reference demo screenshots (manual parity check).
       The pressed golden surfaced a real crash: the `touchFeedbackOpacity` spring overshoots
       past 1.0, so `TouchFeedback` now clamps its `Opacity` to [0, 1].
 - [x] **Step 4: Commit** — `git commit -am "test: golden baseline"`
@@ -449,8 +449,7 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 
 ### Task 7.1: Package docs
 
-- [x] **Step 1:** Write `packages/jelly_tabs/README.md` (usage, install, all props table — the
-      Flutter equivalent of RN's `CUSTOMIZATION.md`).
+- [x] **Step 1:** Write `packages/jelly_tabs/README.md` (usage, install, all props table).
 - [x] **Step 2:** Ensure dartdoc on every public member (`dart doc` clean).
 - [x] **Step 3: Commit** — `git commit -am "docs: package readme + dartdoc"`
 
@@ -474,7 +473,8 @@ test('clampTargetValue bounds to [0, maxTabIndex]', () { ... });
 ## Definition of Done (whole project)
 
 - [x] `flutter analyze` clean; `dart format` clean; tests + goldens pass; coverage target met.
-- [x] Behavior parity: press/drag/long-press/snap/jelly-settle/velocity-shear verified vs RN demo.
+- [x] Behavior parity: press/drag/long-press/snap/jelly-settle/velocity-shear verified vs the
+      reference demo.
 - [x] Example app builds and runs on Android, iOS, and Web.
 - [x] Public API matches `docs/design.md` §5; every default matches §5.5.
 - [ ] PR opened with VGV review pass applied.

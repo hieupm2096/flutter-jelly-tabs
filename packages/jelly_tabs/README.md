@@ -3,9 +3,8 @@
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
 [![License: MIT][license_badge]][license_link]
 
-A headless, jelly-animated tab bar for Flutter, ported from
-[`react-native-jelly-tabs`](https://github.com/felipe-software/react-native-jelly-tabs)
-with **zero runtime dependencies** — it depends only on the Flutter SDK.
+A headless, jelly-animated tab bar for Flutter with **zero runtime
+dependencies** — it depends only on the Flutter SDK.
 
 The pill indicator snaps between tabs with a custom analytical damped-spring
 physics engine, and supports drag-to-switch, press inflation, track distortion
@@ -88,7 +87,7 @@ showcase (`displayScale`, `maxWidth`, backdrops).
 
 ### `JellyTabBarHeadless`
 
-The only widget you need. All parameters mirror the React Native component.
+The only widget you need.
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -126,7 +125,7 @@ The only widget you need. All parameters mirror the React Native component.
 
 `JellyTabsIconBuilder` is `Widget Function(JellyTabsIconProps)`, and
 `JellyTabsIconProps` carries the resolved `color`, `colors`, `opacity`, and
-`size` so your icon render-function can mirror the RN `TabsIcon` signature.
+`size` so your icon render-function can mirror the `TabsIcon` signature.
 
 ### Configuration
 
@@ -150,8 +149,7 @@ JellyTabBarHeadless(
 ```
 
 `resolveJellyTabsConfig([override])` returns the fully-resolved
-`JellyTabsConfig`. Defaults (verbatim from the RN source — see
-`docs/design.md` §5.5 for the full table): `iconSize 28`, `itemHeight 56`,
+`JellyTabsConfig`. Defaults (see `docs/design.md` §5.5 for the full table): `iconSize 28`, `itemHeight 56`,
 `trackHeight 64`, `trackInset 4`, `maskOverscanX 48`, `maskOverscanY 16`,
 `colors {activeContent #11100F, inactiveContent #B8B4AD, selectedSurface
 #F2EEE7, surface #22211F}`, `opacity {all 1}`, `pillJelly {pressedScale 1.3,
@@ -183,9 +181,7 @@ Golden tests are tagged `TestTag.golden`; regenerate with
 
 ## License 📄
 
-MIT — see [LICENSE](LICENSE). The port is a from-scratch Dart
-reimplementation of the MIT-licensed
-[`react-native-jelly-tabs`](https://github.com/felipe-software/react-native-jelly-tabs).
+MIT — see [LICENSE](LICENSE).
 
 [license_badge]: https://img.shields.io/badge/license-MIT-blue.svg
 [license_link]: https://opensource.org/licenses/MIT

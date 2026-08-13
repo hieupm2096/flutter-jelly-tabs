@@ -14,8 +14,7 @@ import 'package:jelly_tabs/src/widgets/pill_masked_view.dart';
 import 'package:jelly_tabs/src/widgets/tab_item.dart';
 import 'package:jelly_tabs/src/widgets/touch_feedback.dart';
 
-/// A headless, jelly-animated tab bar, ported from `react-native-jelly-tabs`'s
-/// `JellyTabBarHeadless`.
+/// A headless, jelly-animated tab bar.
 ///
 /// Renders the track layers described in `architecture.md` §3.1 — surface,
 /// touch feedback glow, inactive tabs, and the pill-revealed selected content —

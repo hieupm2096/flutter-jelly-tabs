@@ -4,16 +4,16 @@ okf_version: "0.1"
 
 # flutter_jelly_tabs — Docs Index
 
-A Flutter port of [`react-native-jelly-tabs`](https://github.com/felipe-software/react-native-jelly-tabs):
-a jelly-like animated tab bar with exact behavior, appearance, parameters, and configuration parity,
-delivered as a headless, dependency-free Flutter package. Built on the VGV AI harness
+A jelly-like animated tab bar with exact behavior, appearance, parameters, and
+configuration parity, delivered as a headless, dependency-free Flutter package.
+Built on the VGV AI harness
 ([`vgv-ai-flutter-plugin`](https://github.com/VeryGoodOpenSource/vgv-ai-flutter-plugin) +
 [`vgv-wingspan`](https://github.com/VeryGoodOpenSource/vgv-wingspan)).
 
 ## Documents
 
 - [design.md](./design.md) — Spec: goals, scope decisions, feature-parity matrix, public API, defaults, behavior, verification strategy
-- [architecture.md](./architecture.md) — Technical design: RN→Flutter module mapping, rendering, spring engine, controllers, gestures, testing
+- [architecture.md](./architecture.md) — Technical design: module mapping, rendering, spring engine, controllers, gestures, testing
 - [implementation-plan.md](./implementation-plan.md) — TDD task-by-task build plan (scaffold → engine → widgets → example → release)
 - [roadmap.md](./roadmap.md) — Phased milestones, session-by-session delivery model, post-MVP backlog
 - [adr/](./adr/) — Architecture decision records (numbered, one decision each)

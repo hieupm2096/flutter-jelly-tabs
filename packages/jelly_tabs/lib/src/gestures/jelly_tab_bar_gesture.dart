@@ -5,15 +5,14 @@ import 'package:flutter/widgets.dart';
 import 'package:jelly_tabs/src/controllers/pill_jelly_controller.dart';
 import 'package:jelly_tabs/src/math/animation_math.dart';
 
-/// Raw-pointer gesture layer for the tab bar, ported from the RN
-/// `Gesture.Pan().minDistance(0)` + `Gesture.LongPress()` worklets.
+/// Raw-pointer gesture layer for the tab bar.
 ///
-/// Flutter's `GestureDetector` pan applies a touch-slop that breaks RN's
-/// min-distance-0 semantics, so this uses a [Listener] with raw pointer events
-/// (see `architecture.md` §6). Pointer down/move/up are forwarded to
-/// [PillJellyController], and a 500ms long-press [Timer] (cancelled on >10px
-/// movement or pointer up) fires [onTabLongPress] with the tab under the
-/// pointer.
+/// Flutter's `GestureDetector` pan applies a touch-slop that breaks the
+/// reference's min-distance-0 semantics, so this uses a [Listener] with raw
+/// pointer events (see `architecture.md` §6). Pointer down/move/up are
+/// forwarded to [PillJellyController], and a 500ms long-press [Timer]
+/// (cancelled on >10px movement or pointer up) fires [onTabLongPress] with the
+/// tab under the pointer.
 class JellyTabBarGestureDetector extends StatefulWidget {
   /// Creates a [JellyTabBarGestureDetector].
   const JellyTabBarGestureDetector({

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// A radial "glow" rendered behind the pill and over the surface, ported from
-/// `react-native-jelly-tabs`'s `TouchFeedback` (SVG radial gradient).
+/// A radial "glow" rendered behind the pill and over the surface.
 ///
 /// Draws a `diameter x diameter` square filled with a radial gradient whose
 /// stops fade from [color] at [centerOpacity] through [middleOpacity] at 45% to

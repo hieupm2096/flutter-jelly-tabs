@@ -177,9 +177,9 @@ class PillJellyController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Mirrors RN's `setFrameLoopActive`: start the ticker immediately, or
-  /// schedule it to stop after a 500ms settle delay. A new activation
-  /// cancels a pending stop so the loop is never halted mid-gesture.
+  /// Mirrors the reference's `setFrameLoopActive`: start the ticker
+  /// immediately, or schedule it to stop after a 500ms settle delay. A new
+  /// activation cancels a pending stop so the loop is never halted mid-gesture.
   void _setFrameLoopActive(bool active) {
     if (active) {
       _idleDeadline = null;

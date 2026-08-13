@@ -50,7 +50,7 @@ void main() {
         customizer: buildCustomizer(onColorsChange: (_) {}),
       );
 
-      expect(find.text('react-native-jelly-tabs'), findsOneWidget);
+      expect(find.text('flutter-jelly-tabs'), findsOneWidget);
       expect(find.text('Change bg'), findsOneWidget);
       expect(find.text('GitHub'), findsOneWidget);
       expect(find.text('Reset'), findsOneWidget);

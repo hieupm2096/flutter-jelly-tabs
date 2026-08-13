@@ -3,7 +3,7 @@ import 'package:example/home/view/color_customizer/palettes.dart';
 import 'package:jelly_tabs/jelly_tabs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _githubUrl = 'https://github.com/felipe-software/react-native-jelly-tabs';
+const _githubUrl = 'https://github.com/hieupm2096/flutter-jelly-tabs';
 
 const _colorFields = <({String key, String label})>[
   (key: 'surface', label: 'Track'),
@@ -30,7 +30,8 @@ const _verticalDragKeys = [
   'rubberBand',
 ];
 
-/// The customization panel from the RN example, ported to the Flutter package.
+/// The customization panel from the reference example, ported to the Flutter
+/// package.
 ///
 /// Renders a header (Change bg / GitHub / Reset) and four collapsible
 /// sections — Palette, Layout, Motion, Touch — whose controls call back into
@@ -318,7 +319,7 @@ class _ColorCustomizerState extends State<ColorCustomizer> {
         children: [
           const Expanded(
             child: Text(
-              'react-native-jelly-tabs',
+              'flutter-jelly-tabs',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(

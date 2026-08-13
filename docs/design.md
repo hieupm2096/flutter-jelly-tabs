@@ -10,8 +10,9 @@ timestamp: 2026-08-08T00:00:00Z
 
 > **Status:** Approved for docs. Package skeleton + implementation are deferred to a dedicated follow-up session.
 > **Date:** 2026-08-08
-> **Source of truth:** [`felipe-software/react-native-jelly-tabs`](https://github.com/felipe-software/react-native-jelly-tabs)
-> pinned at commit [`67f47f2`](https://github.com/felipe-software/react-native-jelly-tabs/commit/67f47f2b5ef665eb7c6d9fd4a3427e346f25cbb8)
+> **Source of truth:** the reference jelly-tabs implementation
+> (see `reference/`), pinned at commit
+> [`67f47f2`](https://github.com/felipe-software/react-native-jelly-tabs/commit/67f47f2b5ef665eb7c6d9fd4a3427e346f25cbb8)
 > (MIT licensed — confirmed compatible with a from-scratch Dart reimplementation). A read-only
 > snapshot of the analyzed source files is vendored at `reference/react-native-jelly-tabs/` so
 > later sessions can re-verify fidelity claims against ground truth instead of trusting these
@@ -19,8 +20,8 @@ timestamp: 2026-08-08T00:00:00Z
 
 ## 1. Overview
 
-`flutter_jelly_tabs` is a Flutter package that ports the jelly-like animated tab bar from
-`react-native-jelly-tabs` — the same behavior, appearance, parameters, and configuration —
+`flutter_jelly_tabs` is a Flutter package that reimplements the jelly-like
+animated tab bar — the same behavior, appearance, parameters, and configuration —
 as a **headless widget** with **zero runtime dependencies**.
 
 The port is built on Very Good Ventures' AI harness: the `vgv-ai-flutter-plugin` supplies the
@@ -30,7 +31,7 @@ document set follows.
 
 ### 1.1 What the reference does
 
-`react-native-jelly-tabs` is a tab bar where a **pill indicator** snaps between tabs with a
+The reference is a tab bar where a **pill indicator** snaps between tabs with a
 custom jelly physics engine, supports **drag-to-switch**, **press inflation**, **track
 distortion on vertical drag**, and a **radial touch-feedback glow**. It ships two components:
 
@@ -55,8 +56,8 @@ and MaskedView (pill reveal).
 - No React Navigation / GoRouter adapter (headless only — confirmed with user).
 - No Bloc / state-management integration inside the package (plain Flutter + controllers).
 - No native plugins or platform channels (no MaskedView equivalent exists; we use a pure-Flutter clip).
-- No Flutter-side "recording" UI or color laboratory (the RN example's extras).
-- No RTL/bidi mirroring (drag direction, pill motion, badge placement) — matches the RN source,
+- No Flutter-side "recording" UI or color laboratory (the reference example's extras).
+- No RTL/bidi mirroring (drag direction, pill motion, badge placement) — matches the reference source,
   which is LTR-only. Revisit if a consumer requests it.
 
 ## 3. Confirmed Scope Decisions
@@ -64,7 +65,7 @@ and MaskedView (pill reveal).
 | Decision | Choice | Rationale |
 | --- | --- | --- |
 | Integration surface | `JellyTabBarHeadless` only | Consumers wire it into their own navigators |
-| Spring fidelity | **Exact** reimplementation of the RN analytical solver | Same params and feel, pixel-for-pixel |
+| Spring fidelity | **Exact** reimplementation of the reference analytical solver | Same params and feel, pixel-for-pixel |
 | Package architecture | Plain Flutter + controllers | A UI package must not force Bloc on consumers |
 | Lints / tooling | `very_good_analysis`, Very Good CLI templates | VGV standard |
 | Example app | Web + Android + iOS | Prove integration on every target |
@@ -72,7 +73,7 @@ and MaskedView (pill reveal).
 
 ## 4. Feature Parity Matrix
 
-| RN Feature | Flutter Port | Notes |
+| Reference Feature | Flutter Port | Notes |
 | --- | --- | --- |
 | Jelly pill snapping | `JellyTabBarHeadless` | Same spring solver |
 | Drag-to-switch | Pan gesture → pointer tracking | Min-distance-0 semantics |
@@ -95,7 +96,7 @@ and MaskedView (pill reveal).
 
 ## 5. Public API
 
-All public API mirrors the RN package. Public types are prefixed to avoid collisions with
+All public API mirrors the reference package. Public types are prefixed to avoid collisions with
 Material widgets. `lib/jelly_tabs.dart` is the single import point (barrel).
 
 ### 5.1 Widget
@@ -159,7 +160,7 @@ class JellyTabsChangeEvent {
 ### 5.4 Config (deep-partial)
 
 ```dart
-// Full resolved types (mirrors RN constants.ts)
+// Full resolved types (mirrors reference constants.ts)
 class JellyTabsLayout { iconSize, itemHeight, maskOverscanX, maskOverscanY, trackHeight, trackInset }
 class JellyTabsColors { activeContent, inactiveContent, selectedSurface, surface }
 class JellyTabsOpacity { activeContent, inactiveContent, selectedSurface, surface }
@@ -177,7 +178,7 @@ class JellyTabsOpacityOverride { double? activeContent; double? inactiveContent;
 JellyTabsConfig resolveJellyTabsConfig([JellyTabsConfigOverride? override]);
 
 // colors and opacity are separate shallow overrides, NOT part of config —
-// resolved as `{...defaults, ...partial}` exactly like RN tabs.tsx, which
+// resolved as `{...defaults, ...partial}` exactly like reference tabs.tsx, which
 // shallow-spreads Partial<TabBarColors> / Partial<TabBarOpacity>.
 ```
 
@@ -186,7 +187,7 @@ their `*Override` counterparts implement value equality (`==`/`hashCode`). Consu
 construct these inline inside `build()`; without value equality, a freshly-constructed-but-equal
 config would look "changed" on every rebuild and could trigger spurious animation/ticker resets.
 
-### 5.5 Defaults (copied verbatim from RN)
+### 5.5 Defaults (copied verbatim from the reference)
 
 | Constant | Value |
 | --- | --- |
@@ -249,13 +250,13 @@ Behavior is ported 1:1 from `src/hooks/use-pill-jelly.ts`, `src/utils/pill-jelly
 Because the reference runs on Reanimated worklets, the strongest fidelity evidence is:
 
 1. **Algorithm parity.** The Dart spring solver, frame stepping, `easeOut`, `rubberBand`, and tab
-   geometry functions are transcribed line-by-line from RN and unit-tested against hand-derived
-   analytic values (critical / under / over-damped closed forms).
+   geometry functions are transcribed line-by-line from the reference and unit-tested against
+   hand-derived analytic values (critical / under / over-damped closed forms).
 2. **Frame-sequence tests.** A fixed input sequence (press, drag, release) at a fixed timestep is
    replayed through the Dart engine; expected shared-value trajectories are asserted.
 3. **Golden tests.** Appearance (rest state, pressed pill, selected state, badge) captured as goldens
-   and diffed against reference screenshots of the RN demo where feasible.
-4. **Visual QA.** The example app (web) serves as the parity surface; run the RN demo
+   and diffed against reference screenshots of the demo where feasible.
+4. **Visual QA.** The example app (web) serves as the parity surface; run the demo
    (https://jelly.felipe.software/) and the Flutter demo side-by-side during implementation.
 
 ## 8. Testing Strategy (VGV)

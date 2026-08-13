@@ -13,7 +13,7 @@ timestamp: 2026-08-08T00:00:00Z
 
 ## Vision
 
-A production-grade, dependency-free Flutter port of `react-native-jelly-tabs` — a jelly-like
+A production-grade, dependency-free Flutter package — a jelly-like
 animated tab bar — with exact behavior/parameter/config parity, shipped as a publishable package
 with a cross-platform example, all built on the VGV AI harness.
 
@@ -25,7 +25,7 @@ other; `S1`/`S2` are the immediate next milestones.
 ### ✅ D0 — Documentation (this session) — DONE
 
 - [x] `docs/design.md` — spec, API surface, defaults, behavior, parity matrix
-- [x] `docs/architecture.md` — RN→Flutter module mapping, rendering/spring/gesture design
+- [x] `docs/architecture.md` — reference-to-Flutter module mapping, rendering/spring/gesture design
 - [x] `docs/implementation-plan.md` — TDD task breakdown
 - [x] `docs/roadmap.md` — this file
 - [x] `docs/index.md` — index
@@ -73,19 +73,20 @@ other; `S1`/`S2` are the immediate next milestones.
 
 ### 🔭 Post-MVP (deferred ideas — explicitly out of current scope)
 
-- [x] Keyboard / focus support (web/desktop, no RN equivalent) — `FocusTraversalGroup` +
+- [x] Keyboard / focus support (web/desktop, no reference equivalent) — `FocusTraversalGroup` +
       `OrderedTraversalPolicy`, per-tab `Focus`, `Shortcuts`/`Actions` for arrow keys and
       Enter/Space → `activateTab`, theme `focusColor` ring, `focusable`/`focused` semantics.
       Implemented TDD (`keyboard_focus_test.dart`, 10 tests) in a post-MVP session.
-- [ ] `JellyTabBar` GoRouter / `StatefulShellRoute.indexedStack` adapter (reactivation of RN's
-      navigation-integrated component) — headless-only was confirmed, so this is a future option.
+- [ ] `JellyTabBar` GoRouter / `StatefulShellRoute.indexedStack` adapter (reactivation of the
+      reference's navigation-integrated component) — headless-only was confirmed, so this is a
+      future option.
 - [ ] Router-agnostic shell helper (auto_route / custom navigator).
 - [ ] Widgetbook catalog (VGV `ui-package` convention) for the package.
 - [ ] `recording` mode polish / exportable animation recording for docs.
-- [ ] Cursor/hover states for desktop/web (beyond RN parity).
+- [ ] Cursor/hover states for desktop/web (beyond reference parity).
 - [ ] pub.dev publish + `flutter pub publish --dry-run` + changelog automation (release-please).
-- [ ] Optional side-by-side automated fidelity harness: replay a recorded RN gesture sequence
-      against the Dart engine and diff trajectories.
+- [ ] Optional side-by-side automated fidelity harness: replay a recorded reference gesture
+      sequence against the Dart engine and diff trajectories.
 
 ## Delivery Model
 

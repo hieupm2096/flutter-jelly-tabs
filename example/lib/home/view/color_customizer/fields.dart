@@ -6,12 +6,12 @@ final _hexPattern = RegExp(r'^#[0-9a-fA-F]{6}$');
 const _sliderActiveColor = Color(0xFF2563EB);
 const _sliderTrackColor = Color(0xFFCBD5E1);
 
-/// Formats a number the way the RN example does.
+/// Formats a number the way the reference example does.
 String formatNumber(double value, int decimals) =>
     decimals == 0 ? value.round().toString() : value.toStringAsFixed(decimals);
 
-/// A labeled slider with a monospaced value readout, ported from the RN
-/// example's `NumberField`.
+/// A labeled slider with a monospaced value readout, ported from the
+/// reference example's `NumberField`.
 class NumberField extends StatelessWidget {
   const NumberField({
     required this.label,
@@ -91,7 +91,7 @@ class NumberField extends StatelessWidget {
   }
 }
 
-/// A hex color input with draft state, ported from the RN example's
+/// A hex color input with draft state, ported from the reference example's
 /// `ColorHexInputField`.
 class ColorHexInput extends StatefulWidget {
   const ColorHexInput({
@@ -193,7 +193,7 @@ class _HexInputFormatter extends TextInputFormatter {
   }
 }
 
-/// A toggle row ported from the RN example's `ToggleField`.
+/// A toggle row ported from the reference example's `ToggleField`.
 class ToggleField extends StatelessWidget {
   const ToggleField({
     required this.label,
@@ -264,7 +264,7 @@ class ToggleField extends StatelessWidget {
   }
 }
 
-/// A titled group of fields, ported from the RN example's `Section`.
+/// A titled group of fields, ported from the reference example's `Section`.
 class Section extends StatelessWidget {
   const Section({required this.title, required this.children, super.key});
 
@@ -294,7 +294,8 @@ class Section extends StatelessWidget {
   }
 }
 
-/// A collapsible section, ported from the RN example's `AccordionSection`.
+/// A collapsible section, ported from the reference example's
+/// `AccordionSection`.
 class AccordionSection extends StatelessWidget {
   const AccordionSection({
     required this.title,

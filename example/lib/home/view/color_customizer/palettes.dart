@@ -8,7 +8,7 @@ class BlurConfig {
   final double track;
 }
 
-/// Default look — the same "Amber" preset the RN example starts with.
+/// Default look — the same "Amber" preset the reference example starts with.
 const kInitialColors = JellyTabsColors(
   activeContent: Color(0xFF451A03),
   inactiveContent: Color(0xFFA8A29E),
@@ -16,11 +16,11 @@ const kInitialColors = JellyTabsColors(
   surface: Color(0xFF1C1917),
 );
 
-/// Default backdrop blur intensities, matching the RN example.
+/// Default backdrop blur intensities, matching the reference example.
 const kInitialBlur = BlurConfig(pill: 20, track: 35);
 
 /// Opacity applied whenever a preset is picked (and used as the default look).
-/// Values are the RN demo opacities bumped ~30% toward fully opaque.
+/// Values are the reference demo opacities bumped ~30% toward fully opaque.
 const kThemeOpacity = JellyTabsOpacity(
   activeContent: 1,
   inactiveContent: 1,
@@ -28,7 +28,7 @@ const kThemeOpacity = JellyTabsOpacity(
   surface: 0.78,
 );
 
-/// A named color preset, mirroring RN's `PALETTES`.
+/// A named color preset, mirroring the reference's `PALETTES`.
 class PalettePreset {
   const PalettePreset({
     required this.label,
@@ -52,8 +52,8 @@ class PalettePreset {
   );
 }
 
-/// The 12 presets exposed in the Palette panel, ported verbatim from the RN
-/// example.
+/// The 12 presets exposed in the Palette panel, ported verbatim from the
+/// reference example.
 const kPalettes = <PalettePreset>[
   PalettePreset(
     label: 'Blue',
