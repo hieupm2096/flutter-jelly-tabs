@@ -1,6 +1,7 @@
 import 'package:example/home/view/color_customizer/color_customizer.dart';
 import 'package:example/home/view/color_customizer/palettes.dart';
 
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jelly_tabs/jelly_tabs.dart';
 
@@ -56,6 +57,23 @@ void main() {
       expect(find.text('Reset'), findsOneWidget);
     });
 
+    testWidgets('renders the header title in full at narrow widths', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await pumpCustomizer(
+        tester,
+        customizer: buildCustomizer(onColorsChange: (_) {}),
+      );
+
+      final title = tester.widget<Text>(find.text('flutter-jelly-tabs'));
+      expect(title.maxLines, isNull);
+      expect(title.overflow, isNot(TextOverflow.ellipsis));
+    });
+
     testWidgets('renders all palette presets in the Palette panel', (
       tester,
     ) async {
@@ -70,6 +88,36 @@ void main() {
           find.byKey(Key('palette-${palette.label}')),
           findsOneWidget,
           reason: 'missing ${palette.label}',
+        );
+      }
+    });
+
+    testWidgets('renders color field labels in full at narrow widths', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(500, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await pumpCustomizer(
+        tester,
+        customizer: buildCustomizer(onColorsChange: (_) {}),
+      );
+      await expandPanel(tester, 'Palette');
+
+      for (final label in [
+        'Track',
+        'Selected pill',
+        'Active content',
+        'Inactive content',
+      ]) {
+        final paragraph = tester.renderObject<RenderParagraph>(
+          find.text(label),
+        );
+        expect(
+          paragraph.textSize.height,
+          lessThan(20),
+          reason: '"$label" wraps to multiple lines in the color row',
         );
       }
     });

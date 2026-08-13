@@ -108,5 +108,36 @@ void main() {
       await tester.tap(find.text('Change bg'));
       await tester.pump();
     });
+
+    testWidgets('scrolls the customizer when a panel is expanded', (
+      tester,
+    ) async {
+      await pumpHome(tester);
+      await expandPanel(tester, 'Palette');
+
+      final scrollable = find
+          .descendant(
+            of: find.byType(SingleChildScrollView).first,
+            matching: find.byType(Scrollable),
+          )
+          .first;
+      final positionBefore = tester
+          .state<ScrollableState>(scrollable)
+          .position
+          .pixels;
+      expect(positionBefore, 0);
+
+      await tester.drag(
+        find.byType(SingleChildScrollView).first,
+        const Offset(0, -400),
+      );
+      await tester.pumpAndSettle();
+
+      final positionAfter = tester
+          .state<ScrollableState>(scrollable)
+          .position
+          .pixels;
+      expect(positionAfter, greaterThan(positionBefore));
+    });
   });
 }

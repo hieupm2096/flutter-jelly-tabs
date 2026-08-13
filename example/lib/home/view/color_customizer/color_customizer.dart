@@ -317,37 +317,36 @@ class _ColorCustomizerState extends State<ColorCustomizer> {
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
       child: Row(
         children: [
-          const Expanded(
-            child: Text(
-              'flutter-jelly-tabs',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Color(0xFF0F172A),
-                fontFamily: 'monospace',
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
-              ),
+          const Text(
+            'flutter-jelly-tabs',
+            style: TextStyle(
+              color: Color(0xFF0F172A),
+              fontFamily: 'monospace',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.5,
             ),
           ),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            alignment: WrapAlignment.end,
-            children: [
-              _HeaderButton(
-                icon: Icons.image,
-                label: 'Change bg',
-                onPressed: widget.onShuffleBackground,
-              ),
-              _HeaderButton(
-                icon: Icons.code,
-                label: 'GitHub',
-                onPressed: _openGithub,
-              ),
-              _ResetButton(onPressed: widget.onReset),
-            ],
+          const SizedBox(width: 12),
+          Expanded(
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              alignment: WrapAlignment.end,
+              children: [
+                _HeaderButton(
+                  icon: Icons.image,
+                  label: 'Change bg',
+                  onPressed: widget.onShuffleBackground,
+                ),
+                _HeaderButton(
+                  icon: Icons.code,
+                  label: 'GitHub',
+                  onPressed: _openGithub,
+                ),
+                _ResetButton(onPressed: widget.onReset),
+              ],
+            ),
           ),
         ],
       ),
@@ -460,6 +459,7 @@ class _ColorCustomizerState extends State<ColorCustomizer> {
           _ColorPreview(color: color, opacity: opacity),
           const SizedBox(width: 10),
           Expanded(
+            flex: 10,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

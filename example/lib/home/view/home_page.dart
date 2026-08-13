@@ -133,24 +133,34 @@ class _HomePageState extends State<HomePage> {
     final customizer = _buildCustomizer();
     final tabBar = _buildTabBar();
     if (kIsWeb) {
-      return Stack(
-        children: [
-          Center(
-            child: SingleChildScrollView(
-              clipBehavior: Clip.none,
-              child: Padding(
-                padding: _tabBarAnimationRoom(),
-                child: SizedBox(width: _webTabBarMaxWidth, child: tabBar),
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          final maxCustomizerWidth =
+              math.max(constraints.maxWidth - _webTabBarMaxWidth - 48, 0) /
+              2;
+          return Stack(
+            children: [
+              Center(
+                child: SingleChildScrollView(
+                  clipBehavior: Clip.none,
+                  child: Padding(
+                    padding: _tabBarAnimationRoom(),
+                    child: SizedBox(width: _webTabBarMaxWidth, child: tabBar),
+                  ),
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            right: 16,
-            top: 16,
-            width: 360,
-            child: SingleChildScrollView(child: customizer),
-          ),
-        ],
+              Positioned(
+                right: 16,
+                top: 16,
+                bottom: 16,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxCustomizerWidth),
+                  child: SingleChildScrollView(child: customizer),
+                ),
+              ),
+            ],
+          );
+        },
       );
     }
     return Column(

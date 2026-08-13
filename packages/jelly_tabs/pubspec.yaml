@@ -1,6 +1,6 @@
 name: jelly_tabs
 description: A jelly-like animated tab bar Flutter package — headless, dependency-free.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/hieupm2096/flutter-jelly-tabs
 resolution: workspace
 

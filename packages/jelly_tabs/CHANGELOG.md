@@ -1,3 +1,7 @@
+# 0.1.1
+
+- Fix example floating customizer overlapping the tab bar on web; the customizer now sizes to content without covering the centered tab bar.
+
 # 0.1.0
 
 Initial release.
